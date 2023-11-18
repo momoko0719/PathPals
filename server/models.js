@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+var mongoose = require('mongoose');
 
 let models = {};
 
@@ -31,8 +31,9 @@ async function main() {
 
   models.Itinerary = mongoose.model('Itinerary', ItinerarySchema);
   models.Comment = mongoose.model('Comment', CommentSchema);
+  models.Place = mongoose.model('Place', PlaceSchema);
 
   console.log('mongoose models created');
 }
 
-export default models;
+module.exports = models;
