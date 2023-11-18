@@ -34,11 +34,11 @@ Moreover, we recognize the power of technology and digital tools in making trave
 
 #### Architectural Diagram Mapping
 
-![Architectural Diagram Mapping](./imgs/architectural-diagram.png)
+![Architectural Diagram Mapping](./assets/architectural-diagram.png)
 
 #### Data Flow
 
-![Data Flow](./imgs/data-flow.png)
+![Data Flow](./assets/data-flow.png)
 
 #### A summary Table of User Stories
 
@@ -74,4 +74,4 @@ GET /api/itineraries/:id :Retrieves an itinerary by ID.
 ### Appendix
 
 **Itinerary Sharer ERD**
-![Itinerary Sharer ERD](./imgs/itinerary_sharer_erd.png)
+![Itinerary Sharer ERD](./assets/itinerary_sharer_erd.png)
