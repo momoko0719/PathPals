@@ -6,12 +6,6 @@ import Profile from './components/Profile';
 import Discover from './components/Discover';
 
 function App() {
-  const [isSignedIn, setIsSignedIn] = useState(true);
-
-  const handleTabChange = (tabName) => {
-    setActiveTab(tabName);
-  };
-
   return (
     <div>
       <header>
