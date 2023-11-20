@@ -30,7 +30,7 @@ async function main() {
     place_name: String
   });
 
-  models.Itinerary = mongoose.model('Itinerary', ItinerarySchema);
+  models.Itinerary = mongoose.model('Itinerary', PathSchema);
   models.Comment = mongoose.model('Comment', CommentSchema);
   models.Place = mongoose.model('Place', PlaceSchema);
 
