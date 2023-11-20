@@ -13,6 +13,7 @@
   "dependencies": {
     "@reach/combobox": "^0.18.0",
     "concurrently": "^8.2.2",
+    "express": "^4.18.2",
     "react-cool-onclickoutside": "^1.7.0",
     "react-router-dom": "^6.19.0"
   }
