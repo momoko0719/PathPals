@@ -1,0 +1,19 @@
+{
+  "name": "final-project-pathpals",
+  "version": "1.0.0",
+  "description": "## Project Proposal",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"cd server && nodemon\" \"cd client && npm start\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@reach/combobox": "^0.18.0",
+    "concurrently": "^8.2.2",
+    "react-cool-onclickoutside": "^1.7.0",
+    "react-router-dom": "^6.19.0"
+  }
+}
