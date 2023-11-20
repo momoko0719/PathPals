@@ -1,11 +1,11 @@
 import React from 'react';
 
 export default function Discover() {
-  let itineraries = [];
+  let paths = [];
   for (let i = 0; i < 6; i++) {
-    itineraries.push(
+    paths.push(
       <div className='col' key={i}>
-        <ItineraryCard />
+        <PathCard />
       </div>
     );
   }
@@ -16,7 +16,7 @@ export default function Discover() {
         <Controllers />
       </div>
       <div className='content-cards row row-cols-3'>
-        {itineraries}
+        {paths}
       </div>
     </div>
   );
@@ -38,7 +38,7 @@ function Controllers() {
   )
 }
 
-function ItineraryCard() {
+function PathCard() {
   return (
     <div className="card">
       <img src="" className="card-img-top" alt="" />
