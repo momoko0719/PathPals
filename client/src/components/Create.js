@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 import usePlacesAutocomplete from "use-places-autocomplete";
 
-const libraries = ['places']
+const libraries = ['places'];
 
 export default function Create() {
   const { isLoaded, loadError } = useLoadScript({
@@ -40,6 +40,13 @@ export default function Create() {
     })
   };
 
+  const handlePlaceSelect = (place) => {
+    setPath(prevState => ({
+      ...prevState,
+      places: [...prevState.places, place]
+    }));
+  }
+
   return (
     <div className='create-container row'>
       <div className='path-editor col'>
@@ -48,12 +55,12 @@ export default function Create() {
           <input className="form-control" id='path_name' type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
         </div>
         <div>
-          <label className='form-label' htmlFor='path_name'>Path Name</label>
-          <input className="form-control" id='path_name' type="text" placeholder="Enter Path Name" onBlur={updateDescription} />
+          <label className='form-label' htmlFor='description'>Description</label>
+          <input className="form-control" id='description' type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
         </div>
         <div>
-          <label className='form-label' htmlFor='path_name'>Path Name</label>
-          <PlacesAutocomplete />
+          <label className='form-label' htmlFor='places'>Path Name</label>
+          <PlacesAutocomplete onPlaceSelect={handlePlaceSelect} />
         </div>
       </div>
       <div className='path-preview col'>
@@ -66,7 +73,7 @@ export default function Create() {
   );
 }
 
-function PlacesAutocomplete() {
+function PlacesAutocomplete({ onPlaceSelect }) {
   const {
     ready,
     value,
@@ -90,6 +97,7 @@ function PlacesAutocomplete() {
     // When the user selects a place, we can replace the keyword without request data from API
     // by setting the second parameter to "false"
     setValue(description, false);
+    onPlaceSelect(description);
     clearSuggestions();
   };
 
@@ -110,6 +118,7 @@ function PlacesAutocomplete() {
     <div>
       <input
         className='form-control'
+        id='places'
         value={value}
         onChange={handleInput}
         disabled={!ready}

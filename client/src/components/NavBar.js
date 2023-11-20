@@ -6,7 +6,7 @@ export default function NavBar() {
       <div className='container'>
         <a className="navbar-brand">PathPal</a>
         <form className="d-flex" role="search">
-          <input className="form-control me-2 search-field" type="search" placeholder="Search for paths with places" aria-label="Search" />
+          <input className="form-control me-2 search-field" type="search" id='search-path' placeholder="Search for paths with places" aria-label="Search" />
           <button className="btn btn-outline-success" type="submit">Search</button>
         </form>
         <ul className="navbar-nav">
