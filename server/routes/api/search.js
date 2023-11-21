@@ -11,7 +11,7 @@ router.get("/", async function (req, res, next) {
         { places: { $regex: searchTerm, $options: "i" } },
       ],
     };
-    const paths = await models.Itinerary.find(searchQuery);
+    const paths = await models.Path.find(searchQuery);
     res.json(paths);
   } catch (err) {
     res.status(500).json({ message: err.message });
