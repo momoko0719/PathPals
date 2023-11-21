@@ -6,10 +6,14 @@ import Profile from './components/Profile';
 import Discover from './components/Discover';
 
 function App() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+  };
   return (
     <div>
       <header>
-        <NavBar />
+        <NavBar onSearch={handleSearch} />
       </header>
       <main>
         <div className='container'>
@@ -23,8 +27,8 @@ function App() {
             <div className='main-content col-10'>
               <Routes>
                 {/* default page */}
-                <Route index element={<Discover />} />
-                <Route path='discover' element={<Discover />} />
+                <Route index element={<Discover searchTerm={searchTerm} />} />
+                <Route path='discover' element={<Discover searchTerm={searchTerm} />} />
                 <Route path='create' element={<Create />} />
                 <Route path='profile' element={<Profile />} />
               </Routes>

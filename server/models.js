@@ -5,7 +5,7 @@ let models = {};
 main().catch(err => console.log(err));
 async function main() {
   console.log('Connecting to MongoDB');
-  await mongoose.connect(`mongodb+srv://xyou:${process.env.MONGO_PW}@team12.tyshshi.mongodb.net/PathPals`);
+  await mongoose.connect(`mongodb+srv://xyou:Ez4gaTtv0BxNssev@team12.tyshshi.mongodb.net/PathPals`);
   console.log('Success!')
 
   const PathSchema = new mongoose.Schema({
@@ -30,7 +30,7 @@ async function main() {
     place_name: String
   });
 
-  models.Itinerary = mongoose.model('Itinerary', ItinerarySchema);
+  models.Itinerary = mongoose.model('Itinerary', PathSchema);
   models.Comment = mongoose.model('Comment', CommentSchema);
   models.Place = mongoose.model('Place', PlaceSchema);
 

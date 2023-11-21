@@ -1,12 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-export default function NavBar() {
+export default function NavBar({ onSearch }) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    onSearch(searchTerm);
+  };
+
   return (
     <nav className="navbar bg-white fixed-top">
       <div className='container'>
         <a className="navbar-brand">PathPal</a>
-        <form className="d-flex" role="search">
-          <input className="form-control me-2 search-field" type="search" id='search-path' placeholder="Search for paths with places" aria-label="Search" />
+        <form className="d-flex" role="search" onSubmit={handleSearchSubmit}>
+          <input
+            className="form-control me-2 search-field"
+            type="search"
+            placeholder="Search for paths with places"
+            aria-label="Search"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
           <button className="btn btn-outline-success" type="submit">Search</button>
         </form>
         <ul className="navbar-nav">
