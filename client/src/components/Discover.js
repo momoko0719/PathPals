@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 export default function Discover({ searchTerm }) {
   const [paths, setPaths] = useState([]);
   const [filteredPaths, setFilteredPaths] = useState([]);
+  const [sortingCriteria, setSortingCriteria] = useState("date");
+  const [sortingOrder, setSortingOrder] = useState("descending");
 
   useEffect(() => {
     fetchPaths(searchTerm);
@@ -10,7 +12,7 @@ export default function Discover({ searchTerm }) {
 
   const fetchPaths = async () => {
     try {
-      const response = await fetch("/api/paths"); // Fetch all paths
+      const response = await fetch("/api/paths");
       const data = await response.json();
       setPaths(data);
     } catch (error) {
@@ -21,17 +23,96 @@ export default function Discover({ searchTerm }) {
   useEffect(() => {
     // Filter paths based on the search term
     const filtered = paths.filter((path) => {
-      const pathNameMatch = path.path_name.toLowerCase().includes(searchTerm.toLowerCase());
-      const placesMatch = path.places.some((place) => place.toLowerCase().includes(searchTerm.toLowerCase()));
+      const pathNameMatch = path.path_name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const placesMatch = path.places.some((place) =>
+        place.toLowerCase().includes(searchTerm.toLowerCase())
+      );
       return pathNameMatch || placesMatch;
     });
-    setFilteredPaths(filtered);
-  }, [searchTerm, paths]);
+    const sortedPaths = sortPaths(filtered);
+    setFilteredPaths(sortedPaths);
+  }, [searchTerm, paths, sortingCriteria, sortingOrder]);
+
+  // Function to sort paths
+  const sortPaths = (pathsToSort) => {
+    const sortedPaths = [...pathsToSort];
+
+    switch (sortingCriteria) {
+      case "likes":
+        sortedPaths.sort((a, b) => {
+          const likesA = a.likes.length;
+          const likesB = b.likes.length;
+          if (sortingOrder === "ascending") {
+            return likesA - likesB;
+          } else {
+            return likesB - likesA;
+          }
+        });
+        break;
+      case "views":
+        sortedPaths.sort((a, b) => {
+          const viewsA = a.num_views;
+          const viewsB = b.num_views;
+          if (sortingOrder === "ascending") {
+            return viewsA - viewsB;
+          } else {
+            return viewsB - viewsA;
+          }
+        });
+        break;
+      case "date":
+        sortedPaths.sort((a, b) => {
+          const dateA = new Date(a.date_created);
+          const dateB = new Date(b.date_created);
+          if (sortingOrder === "ascending") {
+            return dateA - dateB;
+          } else {
+            return dateB - dateA;
+          }
+        });
+        break;
+      default:
+        // Default sorting (no sorting)
+        break;
+    }
+
+    return sortedPaths;
+  };
+
+  // Function to handle sorting criteria change
+  const handleSortingCriteriaChange = (criteria) => {
+    if (criteria === sortingCriteria) {
+      setSortingOrder((prevOrder) =>
+        prevOrder === "ascending" ? "descending" : "ascending"
+      );
+    } else {
+      setSortingCriteria(criteria);
+      setSortingOrder("ascending");
+    }
+  };
+
+  // Function to render sorting icons based on sorting criteria
+  const renderSortingIcon = (criteria) => {
+    const isActive = criteria === sortingCriteria;
+    const iconClass = isActive
+      ? sortingOrder === "ascending"
+        ? "bi-sort-up"
+        : "bi-sort-down"
+      : "bi-sort-down";
+    const colorClass = isActive ? "text-primary" : "text-secondary";
+
+    return <i className={`bi ${iconClass} ${colorClass}`}></i>;
+  };
 
   return (
     <div className="content-container">
       <div className="content-controllers">
-        <Controllers />
+        <Controllers
+          handleSortingCriteriaChange={handleSortingCriteriaChange}
+          renderSortingIcon={renderSortingIcon}
+        />
       </div>
       <div className="content-cards row row-cols-3">
         {filteredPaths.map((path, index) => (
@@ -44,12 +125,28 @@ export default function Discover({ searchTerm }) {
   );
 }
 
-function Controllers() {
+function Controllers({ handleSortingCriteriaChange, renderSortingIcon }) {
   return (
     <div className="row">
-      <div className="col-2">Controller 1</div>
-      <div className="col-2">Controller 2</div>
-      <div className="col-2">Controller 3</div>
+      <div
+        className="col-2"
+        onClick={() => handleSortingCriteriaChange("likes")}
+      >
+        Likes {renderSortingIcon("likes")}
+      </div>
+      <div
+        className="col-2"
+        onClick={() => handleSortingCriteriaChange("views")}
+      >
+        Views {renderSortingIcon("views")}
+      </div>
+
+      <div
+        className="col-2"
+        onClick={() => handleSortingCriteriaChange("date")}
+      >
+        Date {renderSortingIcon("date")}
+      </div>
     </div>
   );
 }
@@ -60,9 +157,7 @@ function PathCard({ path }) {
       <img src="" className="card-img-top" alt="" />
       <div className="card-body">
         <h5 className="card-title">{path.path_name}</h5>
-        <p className="card-text">
-          {path.description}
-        </p>
+        <p className="card-text">{path.description}</p>
         <div className="place-list">
           <h6>Places:</h6>
           <ul>
@@ -70,6 +165,11 @@ function PathCard({ path }) {
               <li key={index}>{place}</li>
             ))}
           </ul>
+          <div>
+            <p className="card-text">{path.likes.length} likes</p>
+            <p className="card-text">{path.num_views} views</p>
+            <p className="card-text">Date: {path.date_created}</p>
+          </div>
         </div>
         <a href="#" className="btn btn-primary">
           View Path
