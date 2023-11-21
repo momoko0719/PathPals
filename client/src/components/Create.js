@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 import usePlacesAutocomplete from "use-places-autocomplete";
 
@@ -15,6 +15,26 @@ export default function Create() {
     description: '',
     places: []
   });
+
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [placeDetail, setPlaceDetail] = useState(null);
+
+  useEffect(() => {
+    if (selectedPlace) {
+      fetchPlaceDetails(selectedPlace);
+    }
+  }, [selectedPlace]);
+
+  const fetchPlaceDetails = async (placeId) => {
+    try {
+      let res = await fetch('/api/addPlaces',{method: "POST", body: {id: placeId}});
+      await statusCheck(res);
+      let details = await res.json();
+      setPlaceDetail(details);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   if (loadError) {
     return <div>Error loading maps</div>;
@@ -40,11 +60,13 @@ export default function Create() {
     })
   };
 
-  const handlePlaceSelect = (place) => {
+  const handlePlaceSelect = (place, id) => {
     setPath(prevState => ({
       ...prevState,
       places: [...prevState.places, place]
     }));
+    console.log(place);
+    console.log(id);
   }
 
   return (
@@ -68,6 +90,13 @@ export default function Create() {
         {path.path_name !== '' && <li>{path.path_name}</li>}
         {path.description !== '' && <li>{path.description}</li>}
         {path.places.length > 0 && <li>{path.places}</li>}
+        {placeDetail &&
+          <div>
+            <h2>{placeDetail.name}</h2>
+            <p>Address: {placeDetail.formatted_address}</p>
+            {placeDetail.photos[0]['html_attributions']}
+          </div>
+        }
       </div>
     </div>
   );
@@ -108,7 +137,7 @@ function PlacesAutocomplete({ onPlaceSelect }) {
     } = suggestion;
 
     return (
-      <li key={place_id} onClick={handleSelect(suggestion)}>
+      <li key={place_id} id={place_id} onClick={handleSelect(suggestion, place_id)}>
         <strong>{main_text}</strong> <small>{secondary_text}</small>
       </li>
     );
@@ -127,4 +156,18 @@ function PlacesAutocomplete({ onPlaceSelect }) {
       {status === "OK" && <ul>{renderSuggestions()}</ul>}
     </div>
   );
+}
+
+/**
+   * Helper function to return the response's result text if successful, otherwise
+   * returns the rejected Promise result with an error status and corresponding text
+   * @param {object} res - response to check for success/error
+   * @return {object} - valid response if response was successful, otherwise rejected
+   *                    Promise result
+   */
+async function statusCheck(res) {
+  if (!res.ok) {
+    throw new Error(await res.text());
+  }
+  return res;
 }
