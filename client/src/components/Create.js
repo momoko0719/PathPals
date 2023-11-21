@@ -108,7 +108,7 @@ function PlacesAutocomplete({ onPlaceSelect }) {
     } = suggestion;
 
     return (
-      <li key={place_id} onClick={handleSelect(suggestion)}>
+      <li key={place_id} id={place_id} onClick={handleSelect(suggestion)}>
         <strong>{main_text}</strong> <small>{secondary_text}</small>
       </li>
     );
