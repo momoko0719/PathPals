@@ -5,7 +5,7 @@ let models = {};
 main().catch(err => console.log(err));
 async function main() {
   console.log('Connecting to MongoDB');
-  await mongoose.connect(`mongodb+srv://xyou:${process.env.MONGO_PW}@team12.tyshshi.mongodb.net/PathPals`);
+  await mongoose.connect(`mongodb+srv://xyou:Ez4gaTtv0BxNssev@team12.tyshshi.mongodb.net/PathPals`);
   console.log('Success!')
 
   const PathSchema = new mongoose.Schema({
