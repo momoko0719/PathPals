@@ -15,22 +15,22 @@ async function main() {
     places: [String],
     date_created: { type: Date, default: Date.now },
     num_views: Number,
-    likes: [String], // an array of usernames that liked this itinerary
-    shared: [String] // an array of usernames that are allowed to edit this itinerary
+    likes: [String], // an array of usernames that liked this path
+    shared: [String] // an array of usernames that are allowed to edit this path
   });
 
   const CommentSchema = new mongoose.Schema({
     username: String,
     comment: String,
     date_created: { type: Date, default: Date.now },
-    path: { type: mongoose.Schema.Types.ObjectId, ref: 'Itinerary' }
+    path: { type: mongoose.Schema.Types.ObjectId, ref: 'Path' }
   });
 
   const PlaceSchema = new mongoose.Schema({
     place_name: String
   });
 
-  models.Itinerary = mongoose.model('Itinerary', PathSchema);
+  models.Path = mongoose.model('Path', PathSchema);
   models.Comment = mongoose.model('Comment', CommentSchema);
   models.Place = mongoose.model('Place', PlaceSchema);
 

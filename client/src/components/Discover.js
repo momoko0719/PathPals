@@ -1,32 +1,32 @@
 import React, { useState, useEffect } from "react";
 
 export default function Discover({ searchTerm }) {
-  const [itineraries, setItineraries] = useState([]);
-  const [filteredItineraries, setFilteredItineraries] = useState([]);
+  const [paths, setPaths] = useState([]);
+  const [filteredPaths, setFilteredPaths] = useState([]);
 
   useEffect(() => {
-    fetchItineraries(searchTerm);
+    fetchPaths(searchTerm);
   }, []);
 
-  const fetchItineraries = async () => {
+  const fetchPaths = async () => {
     try {
-      const response = await fetch("/api/paths"); // Fetch all itineraries
+      const response = await fetch("/api/paths"); // Fetch all paths
       const data = await response.json();
-      setItineraries(data);
+      setPaths(data);
     } catch (error) {
-      console.error("Error fetching itineraries:", error);
+      console.error("Error fetching paths:", error);
     }
   };
 
   useEffect(() => {
-    // Filter itineraries based on the search term
-    const filtered = itineraries.filter((itinerary) => {
-      const pathNameMatch = itinerary.path_name.toLowerCase().includes(searchTerm.toLowerCase());
-      const placesMatch = itinerary.places.some((place) => place.toLowerCase().includes(searchTerm.toLowerCase()));
+    // Filter paths based on the search term
+    const filtered = paths.filter((path) => {
+      const pathNameMatch = path.path_name.toLowerCase().includes(searchTerm.toLowerCase());
+      const placesMatch = path.places.some((place) => place.toLowerCase().includes(searchTerm.toLowerCase()));
       return pathNameMatch || placesMatch;
     });
-    setFilteredItineraries(filtered);
-  }, [searchTerm, itineraries]);
+    setFilteredPaths(filtered);
+  }, [searchTerm, paths]);
 
   return (
     <div className="content-container">
@@ -34,9 +34,9 @@ export default function Discover({ searchTerm }) {
         <Controllers />
       </div>
       <div className="content-cards row row-cols-3">
-        {filteredItineraries.map((itinerary, index) => (
+        {filteredPaths.map((path, index) => (
           <div className="col" key={index}>
-            <PathCard itinerary={itinerary} />
+            <PathCard path={path} />
           </div>
         ))}
       </div>
@@ -54,19 +54,19 @@ function Controllers() {
   );
 }
 
-function PathCard({ itinerary }) {
+function PathCard({ path }) {
   return (
     <div className="card">
       <img src="" className="card-img-top" alt="" />
       <div className="card-body">
-        <h5 className="card-title">{itinerary.path_name}</h5>
+        <h5 className="card-title">{path.path_name}</h5>
         <p className="card-text">
-          {itinerary.description}
+          {path.description}
         </p>
         <div className="place-list">
           <h6>Places:</h6>
           <ul>
-            {itinerary.places.map((place, index) => (
+            {path.places.map((place, index) => (
               <li key={index}>{place}</li>
             ))}
           </ul>

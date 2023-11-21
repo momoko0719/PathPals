@@ -3,7 +3,7 @@ var models = require("../../models");
 var router = express.Router();
 
 router.get("/", async function (req, res, next) {
-  const paths = await models.Itinerary.find();
+  const paths = await models.Path.find();
   let pathsData = await Promise.all(
     paths.map(async (path) => {
       try {
@@ -14,7 +14,7 @@ router.get("/", async function (req, res, next) {
           places: path.places,
           date_created: path.date_created,
           num_views: path.num_views,
-          likes: path.likes, // an array of usernames that liked this itinerary
+          likes: path.likes, // an array of usernames that liked this path
           shared: path.shared,
         };
       } catch (error) {
