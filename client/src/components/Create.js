@@ -15,7 +15,6 @@ export default function Create() {
     description: '',
     places: []
   });
-
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [placeDetail, setPlaceDetail] = useState(null);
 
@@ -27,7 +26,7 @@ export default function Create() {
 
   const fetchPlaceDetails = async (placeId) => {
     try {
-      let res = await fetch('/api/addPlaces',{method: "POST", body: {id: placeId}});
+      let res = await fetch('/api/addPlaces', { method: "POST", body: { id: placeId } });
       await statusCheck(res);
       let details = await res.json();
       setPlaceDetail(details);
@@ -65,8 +64,7 @@ export default function Create() {
       ...prevState,
       places: [...prevState.places, place]
     }));
-    console.log(place);
-    console.log(id);
+    setSelectedPlace(id);
   }
 
   return (
@@ -122,11 +120,11 @@ function PlacesAutocomplete({ onPlaceSelect }) {
     setValue(e.target.value);
   };
 
-  const handleSelect = ({ description }) => () => {
+  const handleSelect = ({ description, place_id }) => () => {
     // When the user selects a place, we can replace the keyword without request data from API
     // by setting the second parameter to "false"
-    setValue(description, false);
-    onPlaceSelect(description);
+    onPlaceSelect(description, place_id);
+    setValue('');
     clearSuggestions();
   };
 
