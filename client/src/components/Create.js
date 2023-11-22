@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 import usePlacesAutocomplete from "use-places-autocomplete";
+import { Parser } from 'html-to-react';
 
 const libraries = ['places'];
 
@@ -26,9 +27,15 @@ export default function Create() {
 
   const fetchPlaceDetails = async (placeId) => {
     try {
-      let res = await fetch('/api/addPlaces', { method: "POST", body: { id: placeId } });
+      let res = await fetch('/api/addPlaces', {
+        method: "POST",
+        body: JSON.stringify({ id: placeId }),
+        headers: {
+          'Content-Type': 'application/json'
+        }});
       await statusCheck(res);
       let details = await res.json();
+      console.log(details);
       setPlaceDetail(details);
     } catch (err) {
       console.log(err);
@@ -92,7 +99,9 @@ export default function Create() {
           <div>
             <h2>{placeDetail.name}</h2>
             <p>Address: {placeDetail.formatted_address}</p>
-            {placeDetail.photos[0]['html_attributions']}
+            <img src={'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference='+
+                       placeDetail.photos[0]['photo_reference']+'&sensor=false&key=' +
+                       process.env.REACT_APP_GOOGLE_API_KEY}></img>
           </div>
         }
       </div>

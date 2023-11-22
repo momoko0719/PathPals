@@ -8,25 +8,24 @@ const client = new Client({});
 
 // given a text input of a place, return the information of that place
 router.post('/', async (req, res) => {
-  try {
-    console.log(req.body.id);
-    if (req.body.id) {
+  if (req.body.id) {
+    try {
       // use placeId to make another request to get places details
       const params = {
-        place_id: id,
+        place_id: req.body.id,
         fields: ['formatted_address', 'name', 'photos'],
-        key: process.env.GOOGLE_MAPS_API_KEY
+        key: process.env.REACT_APP_GOOGLE_API_KEY
       }
 
       let response = await client.placeDetails({ params: params });
 
       res.json(response.data.result);
-    } else {
-      // res.type('text').send('Please input a place name');
-      res.json({ status: 'Bad' })
+    } catch (err) {
+      console.log(err);
     }
-  } catch (err) {
-    console.log(err);
+  } else {
+    // res.type('text').send('Please input a place name');
+    res.json({ status: 'Bad' })
   }
 });
 
