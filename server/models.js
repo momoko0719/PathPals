@@ -12,11 +12,11 @@ async function main() {
     username: String,
     path_name: String,
     description: String,
-    places: [String],
+    places: [String], // an array of place ids
     date_created: { type: Date, default: Date.now },
-    num_views: Number,
-    likes: [String], // an array of usernames that liked this path
-    shared: [String] // an array of usernames that are allowed to edit this path
+    num_views: { type: Number, default: 0 },
+    likes: { type: [String], default: [] }, // an array of usernames that liked this path
+    shared: { type: [String], default: [] } // an array of usernames that are allowed to edit this path
   });
 
   const CommentSchema = new mongoose.Schema({

@@ -1,55 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 import usePlacesAutocomplete from "use-places-autocomplete";
-import { Parser } from 'html-to-react';
 
 const libraries = ['places'];
 
 export default function Create() {
+  // loads Google places autocomplete
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
     libraries: libraries
   });
 
+  // path that will be modified and updated
   const [path, setPath] = useState({
     path_name: '',
     description: '',
     places: []
   });
-  const [selectedPlace, setSelectedPlace] = useState(null);
-  const [placeDetail, setPlaceDetail] = useState(null);
 
-  useEffect(() => {
-    if (selectedPlace) {
-      fetchPlaceDetails(selectedPlace);
-    }
-  }, [selectedPlace]);
-
-  const fetchPlaceDetails = async (placeId) => {
-    try {
-      let res = await fetch('/api/addPlaces', {
-        method: "POST",
-        body: JSON.stringify({ id: placeId }),
-        headers: {
-          'Content-Type': 'application/json'
-        }});
-      await statusCheck(res);
-      let details = await res.json();
-      console.log(details);
-      setPlaceDetail(details);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  if (loadError) {
-    return <div>Error loading maps</div>;
-  }
-
-  if (!isLoaded) {
-    return <div>Loading</div>;
-  }
-
+  // updates path object on user inputs
   const updatePathName = (e) => {
     let newName = e.target.value;
     setPath({
@@ -66,17 +35,43 @@ export default function Create() {
     })
   };
 
-  const handlePlaceSelect = (place, id) => {
+  const handlePlaceSelect = async (id) => {
     setPath(prevState => ({
       ...prevState,
-      places: [...prevState.places, place]
+      places: [...prevState.places, id]
     }));
-    setSelectedPlace(id);
+  }
+
+  const handleClickDone = async () => {
+    try {
+      let res = await fetch('/api/addPlaces', {
+        method: "POST",
+        body: JSON.stringify(path),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      await statusCheck(res);
+      let details = await res.json();
+      console.log(details);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  // message when there is an error
+  if (loadError) {
+    return <div>Error loading maps</div>;
+  }
+
+  // message when it is still loading
+  if (!isLoaded) {
+    return <div>Loading</div>;
   }
 
   return (
     <div className='create-container row'>
-      <div className='path-editor col'>
+      <div className='path-editor col-6'>
         <div>
           <label className='form-label' htmlFor='path_name'>Path Name</label>
           <input className="form-control" id='path_name' type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
@@ -89,21 +84,13 @@ export default function Create() {
           <label className='form-label' htmlFor='places'>Path Name</label>
           <PlacesAutocomplete onPlaceSelect={handlePlaceSelect} />
         </div>
+        <button className='btn btn-success' onClick={handleClickDone}>Done</button>
       </div>
-      <div className='path-preview col'>
+      <div className='path-preview col-6'>
         This is a preview to your path!
         {path.path_name !== '' && <li>{path.path_name}</li>}
         {path.description !== '' && <li>{path.description}</li>}
-        {path.places.length > 0 && <li>{path.places}</li>}
-        {placeDetail &&
-          <div>
-            <h2>{placeDetail.name}</h2>
-            <p>Address: {placeDetail.formatted_address}</p>
-            <img src={'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference='+
-                       placeDetail.photos[0]['photo_reference']+'&sensor=false&key=' +
-                       process.env.REACT_APP_GOOGLE_API_KEY}></img>
-          </div>
-        }
+        <RenderPlacesDetail places={path.places} />
       </div>
     </div>
   );
@@ -129,10 +116,8 @@ function PlacesAutocomplete({ onPlaceSelect }) {
     setValue(e.target.value);
   };
 
-  const handleSelect = ({ description, place_id }) => () => {
-    // When the user selects a place, we can replace the keyword without request data from API
-    // by setting the second parameter to "false"
-    onPlaceSelect(description, place_id);
+  const handleSelect = (place_id) => {
+    onPlaceSelect(place_id);
     setValue('');
     clearSuggestions();
   };
@@ -144,9 +129,9 @@ function PlacesAutocomplete({ onPlaceSelect }) {
     } = suggestion;
 
     return (
-      <li key={place_id} id={place_id} onClick={handleSelect(suggestion, place_id)}>
+      <div className='suggestion' key={place_id} onClick={() => handleSelect(place_id)}>
         <strong>{main_text}</strong> <small>{secondary_text}</small>
-      </li>
+      </div>
     );
   });
 
@@ -159,10 +144,57 @@ function PlacesAutocomplete({ onPlaceSelect }) {
         onChange={handleInput}
         disabled={!ready}
         placeholder="Search for places"
+        autoComplete='off'
       />
-      {status === "OK" && <ul>{renderSuggestions()}</ul>}
+      {status === "OK" && <div className='suggestions'>{renderSuggestions()}</div>}
     </div>
   );
+}
+
+function RenderPlacesDetail({ places }) {
+  const [placesDetails, setPlacesDetails] = useState([]);
+  useEffect(() => {
+    const fetchPlaceDetails = async (placeId) => {
+      try {
+        let res = await fetch(`/api/addPlaces?placeid=${placeId}`);
+        await statusCheck(res); // Assuming statusCheck is a function you've defined
+        let details = await res.json();
+        return details;
+      } catch (err) {
+        console.log(err);
+        return null; // Return null or some default object in case of an error
+      }
+    }
+
+    places.forEach(async (place) => {
+      const details = await fetchPlaceDetails(place);
+      setPlacesDetails(prevDetails => [...prevDetails, details]);
+    });
+  }, [places]);
+
+  return (
+    <div className='card-container'>
+      {
+        placesDetails.map((place, index) => {
+          // return (
+          //   <div className='card' key={index}>
+          //     <h1>{place}</h1>
+          //   </div>
+          // )
+          console.log(place);
+        })
+      }
+      {/* {
+        placesDetails.map((place, index) => {
+          return (
+            <div className='card' key={index}>
+              <h1>{place.name}</h1>
+            </div>
+          )
+        })
+      } */}
+    </div>
+  )
 }
 
 /**
