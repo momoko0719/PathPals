@@ -8,6 +8,8 @@ const router = express.Router();
 // create a new client to make the fetch call
 const client = new Client({});
 
+let API_COUNT = 0;
+
 // given a text input of a place, return the information of that place
 router.get('/', async (req, res) => {
   if (req.query.placeid) {
@@ -20,7 +22,8 @@ router.get('/', async (req, res) => {
       }
 
       let response = await client.placeDetails({ params: params });
-
+      API_COUNT++;
+      console.log(API_COUNT);
       res.json(response.data.result);
     } catch (err) {
       res.json()

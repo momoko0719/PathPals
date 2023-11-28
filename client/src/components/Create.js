@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 import usePlacesAutocomplete from "use-places-autocomplete";
 
+import PathDetails from './PathDetails';
+
 const libraries = ['places'];
 
 export default function Create() {
@@ -88,9 +90,7 @@ export default function Create() {
       </div>
       <div className='path-preview col-6'>
         This is a preview to your path!
-        {path.path_name !== '' && <li>{path.path_name}</li>}
-        {path.description !== '' && <li>{path.description}</li>}
-        <RenderPlacesDetail places={path.places} />
+        <PathDetails path={path} />
       </div>
     </div>
   );
@@ -149,52 +149,6 @@ function PlacesAutocomplete({ onPlaceSelect }) {
       {status === "OK" && <div className='suggestions'>{renderSuggestions()}</div>}
     </div>
   );
-}
-
-function RenderPlacesDetail({ places }) {
-  const [placesDetails, setPlacesDetails] = useState([]);
-  useEffect(() => {
-    const fetchPlaceDetails = async (placeId) => {
-      try {
-        let res = await fetch(`/api/addPlaces?placeid=${placeId}`);
-        await statusCheck(res); // Assuming statusCheck is a function you've defined
-        let details = await res.json();
-        return details;
-      } catch (err) {
-        console.log(err);
-        return null; // Return null or some default object in case of an error
-      }
-    }
-
-    places.forEach(async (place) => {
-      const details = await fetchPlaceDetails(place);
-      setPlacesDetails(prevDetails => [...prevDetails, details]);
-    });
-  }, [places]);
-
-  return (
-    <div className='card-container'>
-      {
-        placesDetails.map((place, index) => {
-          // return (
-          //   <div className='card' key={index}>
-          //     <h1>{place}</h1>
-          //   </div>
-          // )
-          console.log(place);
-        })
-      }
-      {/* {
-        placesDetails.map((place, index) => {
-          return (
-            <div className='card' key={index}>
-              <h1>{place.name}</h1>
-            </div>
-          )
-        })
-      } */}
-    </div>
-  )
 }
 
 /**
