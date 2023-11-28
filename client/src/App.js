@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Route, Routes, Link } from 'react-router-dom';
 import { MsalProvider } from '@azure/msal-react';
 import PageAccess from './pageAccess';
-import { loginRequest } from './auth-config';
 import { msalInstance } from './index';
 import NavBar from './components/NavBar';
 import Create from './components/Create';

@@ -1,11 +1,10 @@
-// PageAccess.js
 import React from 'react';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
 import { loginRequest } from './auth-config';
 
 const PageAccess = () => {
-  const { instance, accounts } = useMsal();
-  const activeAccount = accounts[0]; // Assuming you're interested in the first account
+  const { instance, accounts} = useMsal();
+  const activeAccount = accounts[0];
 
   const handleLogin = async () => {
     try {
@@ -16,27 +15,35 @@ const PageAccess = () => {
     }
   };
 
-  // Log user info to console
-  React.useEffect(() => {
-    if (activeAccount) {
-      console.log('User Name:', activeAccount.name);
-      console.log('Email:', activeAccount.username);
-    }
-  }, [activeAccount]);
+  //log out
+  const handleLogout = () => {
+    instance.logout();
+  };
+
+  // // Does it work ??
+  // React.useEffect(() => {
+  //   if (activeAccount) {
+  //     console.log('User Name:', activeAccount.name);
+  //     console.log('Email:', activeAccount.username);
+  //   }
+  // }, [activeAccount]);
 
   return (
     <div className='App'>
       <AuthenticatedTemplate>
         {activeAccount ? (
           <div>
-            <p>Authenticated Successfully</p>
+            <p>Logged in Account: </p>
             <p>User Name: {activeAccount.name}</p>
             <p>Email: {activeAccount.username}</p>
+            <button onClick={handleLogout}>Log Out</button>
           </div>
         ) : null}
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
-        <button onClick={handleLogin}>Log In</button>
+      <button onClick={handleLogin}>
+        Log In
+      </button>
       </UnauthenticatedTemplate>
     </div>
   );
