@@ -12,16 +12,25 @@ const client = new Client({});
 router.get('/', async (req, res) => {
   if (req.query.placeid) {
     try {
-      // use placeId to make another request to get places details
-      const params = {
-        place_id: req.query.placeid,
-        fields: ['formatted_address', 'name', 'photos'],
-        key: process.env.REACT_APP_GOOGLE_API_KEY
+      // check if placeId exists in our mongodb
+      // if exist, grab info
+      // else, make fetch call to Google API
+      let exist = await req.models.Place.find({place_id: req.query.placeid});
+
+      if(exist.length > 0){
+        console.log(exist);
+        res.json(exist);
+      }else{
+        // use placeId to make another request to get places details
+        const params = {
+          place_id: req.query.placeid,
+          fields: ['formatted_address', 'name', 'photos'],
+          key: process.env.REACT_APP_GOOGLE_API_KEY
+        }
+
+        let response = await client.placeDetails({ params: params });
+        res.json(response.data.result);
       }
-
-      let response = await client.placeDetails({ params: params });
-
-      res.json(response.data.result);
     } catch (err) {
       res.json()
     }

@@ -27,7 +27,8 @@ async function main() {
   });
 
   const PlaceSchema = new mongoose.Schema({
-    place_name: String
+    place_name: String,
+    place_id: String
   });
 
   models.Path = mongoose.model('Path', PathSchema);
