@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
 
 export default function PathDetails({ path }) {
+  console.log(path);
+  console.log(path.places);
   const [placesDetails, setPlacesDetails] = useState([]);
 
   useEffect(() => {
-    if (path.places.length > 0) {
+    const fetchAllPlaceDetails = async () => {
+      const details = await Promise.all(path.places.map(place => fetchPlaceDetails(place)));
+      setPlacesDetails(details);
+    };
 
+    if (path.places.length > 0) {
+      fetchAllPlaceDetails();
     }
   }, [path]);
 

@@ -17,7 +17,7 @@ export default function Create() {
   const [path, setPath] = useState({
     path_name: '',
     description: '',
-    places: []
+    places: [] // an array of place ids
   });
 
   // updates path object on user inputs
