@@ -30,9 +30,15 @@ async function main() {
     place_name: String
   });
 
+  const UserSchema = new mongoose.Schema ({
+    username: String,
+    email: String
+  })
+
   models.Path = mongoose.model('Path', PathSchema);
   models.Comment = mongoose.model('Comment', CommentSchema);
   models.Place = mongoose.model('Place', PlaceSchema);
+  models.User = mongoose.model('User', UserSchema);
 
   console.log('mongoose models created');
 }
