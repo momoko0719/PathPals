@@ -23,14 +23,14 @@ export default function Discover({ searchTerm }) {
       bottom: "auto",
       marginRight: "-50%",
       transform: "translate(-50%, -50%)",
-      width: "70%", 
-      height: "80%", 
+      width: "70%",
+      height: "80%",
     },
   };
 
   useEffect(() => {
     fetchPaths(searchTerm);
-  }, []);
+  }, [searchTerm]);
 
   const fetchPaths = async () => {
     try {

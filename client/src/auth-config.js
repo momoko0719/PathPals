@@ -13,7 +13,7 @@ import { LogLevel } from "@azure/msal-browser";
 export const msalConfig = {
     auth: {
         clientId: "28ca85bb-3fb6-40a0-997f-3ccc37f43375", // This is the ONLY mandatory field that you need to supply.
-        authority:"https://login.microsoftonline.com/f6b6dd5b-f02f-441a-99a0-162ac5060bd2", // Choose SUSI as your default authority.
+        authority: "https://login.microsoftonline.com/f6b6dd5b-f02f-441a-99a0-162ac5060bd2", // Choose SUSI as your default authority.
         redirectUri: 'http://localhost:3000', // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
         postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
         navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
@@ -33,7 +33,7 @@ export const msalConfig = {
                         console.error(message);
                         return;
                     case LogLevel.Info:
-                        console.info(message);
+                        // console.info(message);
                         return;
                     case LogLevel.Verbose:
                         console.debug(message);

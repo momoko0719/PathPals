@@ -27,8 +27,10 @@ async function main() {
   });
 
   const PlaceSchema = new mongoose.Schema({
+    place_id: String,
     place_name: String,
-    place_id: String
+    formatted_address: String,
+    photos: [Object] // an array of photo objects
   });
 
   models.Path = mongoose.model('Path', PathSchema);
