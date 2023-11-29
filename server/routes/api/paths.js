@@ -2,6 +2,7 @@ var express = require("express");
 var models = require("../../models");
 var router = express.Router();
 
+// get all paths
 router.get("/", async function (req, res, next) {
   const paths = await models.Path.find();
   let pathsData = await Promise.all(
@@ -23,6 +24,23 @@ router.get("/", async function (req, res, next) {
     })
   );
   res.json(pathsData);
+});
+
+// save a new path
+router.post('/', async (req, res) => {
+  try {
+    let { path_name, description, places } = req.body;
+    const newPath = new models.Path({
+      username: 'Sam',
+      path_name,
+      description,
+      places
+    });
+    await newPath.save();
+    res.json({ status: 'success' });
+  } catch (error) {
+    res.status(500).json({ status: "error", error: error.message });
+  }
 });
 
 module.exports = router;

@@ -15,12 +15,13 @@ router.get('/', async (req, res) => {
       // check if placeId exists in our mongodb
       // if exist, grab info
       // else, make fetch call to Google API
-      let exist = await req.models.Place.find({place_id: req.query.placeid});
+      let exist = await req.models.Place.find({ place_id: req.query.placeid });
 
-      if(exist.length > 0){
+      if (exist.length > 0) {
+        console.log('exists in db')
         console.log(exist);
-        res.json(exist);
-      }else{
+        res.json(exist[0]);
+      } else {
         // use placeId to make another request to get places details
         const params = {
           place_id: req.query.placeid,
@@ -29,6 +30,8 @@ router.get('/', async (req, res) => {
         }
 
         let response = await client.placeDetails({ params: params });
+        // save the place to mongodb with the placeId as the key
+        await addNewPlace(response.data.result, req.query.placeid);
         res.json(response.data.result);
       }
     } catch (err) {
@@ -39,20 +42,18 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
-  try {
-    let { path_name, description, places } = req.body;
-    const newPath = new models.Path({
-      username: 'Sam',
-      path_name,
-      description,
-      places
-    });
-    await newPath.save();
-    res.json({ status: 'success' });
-  } catch (error) {
-    res.status(500).json({ status: "error", error: error.message });
-  }
-});
+async function addNewPlace(place, placeid) {
+  // dropthe html_attributions key from each photo object
+  place.photos.forEach((photo) => {
+    delete photo.html_attributions;
+  });
+  const newPlace = new models.Place({
+    place_id: placeid,
+    place_name: place.name,
+    formatted_address: place.formatted_address,
+    photos: place.photos
+  });
+  await newPlace.save();
+}
 
 module.exports = router;

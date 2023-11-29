@@ -46,7 +46,7 @@ export default function Create() {
 
   const handleClickDone = async () => {
     try {
-      let res = await fetch('/api/addPlaces', {
+      let res = await fetch('/api/paths', {
         method: "POST",
         body: JSON.stringify(path),
         headers: {

@@ -1,11 +1,12 @@
 import React from "react";
+import PathDetails from "./PathDetails";
 
 function Detail({ path }) {
   return (
     <div className="container">
       <div className="row">
         <div className="col-md-6">
-          {/* Path Preview */}
+          <PathDetails path={path} />
           <div>
             <h5>Path Preview</h5>
           </div>
