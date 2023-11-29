@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Route, Routes, Link } from 'react-router-dom';
+import { MsalProvider } from '@azure/msal-react';
+import PageAccess from './pageAccess';
+import { msalInstance } from './index';
 import NavBar from './components/NavBar';
 import Create from './components/Create';
 import Profile from './components/Profile';
@@ -10,6 +13,7 @@ function App() {
   const handleSearch = (term) => {
     setSearchTerm(term);
   };
+
   return (
     <div>
       <header>
@@ -23,6 +27,7 @@ function App() {
               <Link to='/discover' className='btn btn-light'>Discover</Link>
               <Link to='/create' className='btn btn-light'>Create</Link>
               <Link to='/profile' className='btn btn-light'>My Profile</Link>
+              <PageAccess />
             </div>
             <div className='main-content col-10'>
               <Routes>
@@ -43,4 +48,10 @@ function App() {
   );
 }
 
-export default App;
+const AppWithMsalProvider = () => (
+  <MsalProvider instance={msalInstance}>
+    <App />
+  </MsalProvider>
+);
+
+export default AppWithMsalProvider;
