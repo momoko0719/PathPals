@@ -1,10 +1,32 @@
 import React, { useState, useEffect } from "react";
+import Modal from "react-modal";
+import Detail from "./Detail";
 
 export default function Discover({ searchTerm }) {
   const [paths, setPaths] = useState([]);
   const [filteredPaths, setFilteredPaths] = useState([]);
   const [sortingCriteria, setSortingCriteria] = useState("date");
   const [sortingOrder, setSortingOrder] = useState("descending");
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedPath, setSelectedPath] = useState(null);
+
+  const openModal = (path) => {
+    setSelectedPath(path);
+    setModalIsOpen(true);
+  };
+
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      width: "70%", 
+      height: "80%", 
+    },
+  };
 
   useEffect(() => {
     fetchPaths(searchTerm);
@@ -117,10 +139,28 @@ export default function Discover({ searchTerm }) {
       <div className="content-cards row row-cols-3">
         {filteredPaths.map((path, index) => (
           <div className="col" key={index}>
-            <PathCard path={path} />
+            <PathCard path={path} onPathClick={openModal} />
           </div>
         ))}
       </div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        style={customStyles}
+        contentLabel="Path Details"
+      >
+        {selectedPath && <Detail path={selectedPath} />}
+        <button
+          onClick={() => setModalIsOpen(false)}
+          className="btn-close"
+          style={{
+            position: 'absolute',
+            top: '15px',
+            right: '15px',
+          }}
+        >
+        </button>
+      </Modal>
     </div>
   );
 }
@@ -151,7 +191,7 @@ function Controllers({ handleSortingCriteriaChange, renderSortingIcon }) {
   );
 }
 
-function PathCard({ path }) {
+function PathCard({ path, onPathClick }) {
   return (
     <div className="card">
       <img src="" className="card-img-top" alt="" />
@@ -171,9 +211,9 @@ function PathCard({ path }) {
             <p className="card-text">Date: {path.date_created}</p>
           </div>
         </div>
-        <a href="#" className="btn btn-primary">
+        <button className="btn btn-primary" onClick={() => onPathClick(path)}>
           View Path
-        </a>
+        </button>
       </div>
     </div>
   );
