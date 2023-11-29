@@ -11,13 +11,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@googlemaps/google-maps-services-js": "^3.3.41",
-    "@reach/combobox": "^0.18.0",
-    "concurrently": "^8.2.2",
-    "express": "^4.18.2",
-    "react-cool-onclickoutside": "^1.7.0",
-    "react-google-autocomplete": "^2.7.3",
-    "react-modal": "^3.16.1",
-    "react-router-dom": "^6.19.0"
+    "concurrently": "^8.2.2"
   }
 }
