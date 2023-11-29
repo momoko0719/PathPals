@@ -33,9 +33,15 @@ async function main() {
     photos: [Object] // an array of photo objects
   });
 
+  const UserSchema = new mongoose.Schema ({
+    username: String,
+    email: String
+  })
+
   models.Path = mongoose.model('Path', PathSchema);
   models.Comment = mongoose.model('Comment', CommentSchema);
   models.Place = mongoose.model('Place', PlaceSchema);
+  models.User = mongoose.model('User', UserSchema);
 
   console.log('mongoose models created');
 }
