@@ -198,7 +198,8 @@ function PathCard({ path, onPathClick }) {
       <div className="card-body">
         <h5 className="card-title">{path.path_name}</h5>
         <p className="card-text">{path.description}</p>
-        <div className="place-list">
+        {/* hide this section for now, not fully implemented */}
+        {/* <div className="place-list">
           <h6>Places:</h6>
           <ul>
             {path.places.map((place, index) => (
@@ -210,7 +211,7 @@ function PathCard({ path, onPathClick }) {
             <p className="card-text">{path.num_views} views</p>
             <p className="card-text">Date: {path.date_created}</p>
           </div>
-        </div>
+        </div> */}
         <button className="btn btn-primary" onClick={() => onPathClick(path)}>
           View Path
         </button>
