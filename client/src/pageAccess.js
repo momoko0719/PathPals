@@ -10,6 +10,8 @@ const PageAccess = () => {
     try {
       await instance.loginPopup(loginRequest);
       // Handle successful login
+      await handleSaveUser();
+      console.log()
     } catch (error) {
       console.error('Error during login:', error);
     }
@@ -25,6 +27,7 @@ const PageAccess = () => {
       try {
         // get name from authrized account
         const {name, username, email} = activeAccount;
+        console.log('User information:', { name, username, email });
         // save the user info
         const saveInfo = {
           name,
