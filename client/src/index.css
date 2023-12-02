@@ -15,6 +15,10 @@ main {
   }
 }
 
+.side-panel .card {
+  margin-bottom: 1rem;
+}
+
 /* main content styles */
 .content-controllers {
   margin-bottom: 1rem;
@@ -47,5 +51,5 @@ main {
     background-color: #dee2e6;
     transition: background-color 0.3s;
   }
-  
+
 }

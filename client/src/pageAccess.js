@@ -75,23 +75,21 @@ const PageAccess = () => {
   }, [instance, activeAccount]);
 
   return (
-    <div className='App'>
+    <>
       <AuthenticatedTemplate>
         {activeAccount ? (
-          <div>
-            <p>Logged in Account: </p>
-            <p>User Name: {activeAccount.name}</p>
-            <p>Email: {activeAccount.username}</p>
-            <button onClick={handleLogout}>Log Out</button>
-          </div>
+          //   <p>Logged in Account: </p>
+          //   <p>User Name: {activeAccount.name}</p>
+          //   <p>Email: {activeAccount.username}</p>
+          <button className="btn btn-danger" onClick={handleLogout}>Log Out</button>
         ) : null}
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
-        <button onClick={handleLogin}>
+        <button className="btn btn-danger" onClick={handleLogin}>
           Log In
         </button>
       </UnauthenticatedTemplate>
-    </div>
+    </>
   );
 };
 
