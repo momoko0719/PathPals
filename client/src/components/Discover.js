@@ -212,9 +212,19 @@ function PathCard({ path, onPathClick }) {
             <p className="card-text">Date: {path.date_created}</p>
           </div>
         </div> */}
-        <button className="btn btn-primary" onClick={() => onPathClick(path)}>
-          View Path
-        </button>
+        <div className="d-flex justify-content-between align-items-center">
+            <button className="btn btn-primary" onClick={() => onPathClick(path)}>
+                View Path
+            </button>
+            <div>
+                <span className="me-2 px-1">
+                    <i className="bi bi-hand-thumbs-up"></i> {path.likes.length}
+                </span>
+                <span>
+                    <i className="bi bi-eye"></i> {path.num_views}
+                </span>
+            </div>
+        </div>
       </div>
     </div>
   );
