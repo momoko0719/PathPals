@@ -3,7 +3,7 @@ import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/
 import { loginRequest } from './auth-config';
 
 const PageAccess = () => {
-  const { instance, accounts} = useMsal();
+  const { instance, accounts } = useMsal();
   const activeAccount = accounts[0];
 
   const handleLogin = async () => {
@@ -26,51 +26,47 @@ const PageAccess = () => {
     if (activeAccount) {
       try {
         // get name from authrized account
-        const {name, username, email} = activeAccount;
-        console.log('User information:', { name, username, email });
+        const { name, username } = activeAccount;
+        console.log('User information:', { name, username });
         // save the user info
-        const saveInfo = {
-          name,
-          username,
-          email
-        }
+        const saveInfo = { name, username };
         // send to server (post request)
         const res = await fetch('/users', {
           method: 'POST',
           body: JSON.stringify(saveInfo),
-          headers:{
+          headers: {
             'Content-Type': 'application/json'
           }
         })
         // check for response
-        if (res.ok){
+        if (res.ok) {
           console.log('sent to server')
-        } else{
+        } else {
           console.log('error sending user info')
         }
-      } catch(error) {
-        console.error ('error in saving user info', error)
+      } catch (error) {
+        console.error('error in saving user info', error)
       }
     }
 
   }
   // Does it work ?? and check for ten expiration
   React.useEffect(() => {
-      const checkTokenExp = async () => {
+    const checkTokenExp = async () => {
       if (activeAccount) {
-        console.log('User Name:', activeAccount.name);
-        console.log('Email:', activeAccount.username);
+        // console.log('User Name:', activeAccount.name);
+        // console.log('Email:', activeAccount.username);
         try {
-            const authResult = await instance.acquireTokenSilent({
-              scopes: ['user.read'],
-              account: activeAccount
-            });
-            // check if the token has expired
-            if (authResult.expiresOn < new Date()){
-                console.log('expired token, please log in again')
-                handleLogout();
-            }
-        } catch(error) {
+          const authResult = await instance.acquireTokenSilent({
+            scopes: ['user.read'],
+            account: activeAccount
+          });
+          // check if the token has expired
+          if (authResult.expiresOn < new Date()) {
+            console.log('expired token, please log in again')
+            handleLogout();
+          }
+        } catch (error) {
           console.error('error during token chec', error)
         }
       }
@@ -91,9 +87,9 @@ const PageAccess = () => {
         ) : null}
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
-      <button onClick={handleLogin}>
-        Log In
-      </button>
+        <button onClick={handleLogin}>
+          Log In
+        </button>
       </UnauthenticatedTemplate>
     </div>
   );
