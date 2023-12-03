@@ -1,31 +1,72 @@
-var express = require('express');
-var router = express.Router();
-var models = require('../models');
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
-/* GET users listing. */
-router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
-});
+const express = require('express');
+const graphMEFetch = require('../fetch.js');
+const { GRAPH_ME_ENDPOINT } = require('../authConfig.js');
 
-// store user info to mongo db
-router.post('/', async (req, res) => {
-  const { name, username } = req.body;
-  try {
-    let exist = await models.User.fin({ username: username });
-    if (exist.length > 0) {
-      console.log('user already exist');
-      res.json({ status: 'success' });
-      return;
-    } else {
-      let newUser = new models.User({ name, username });
-      await newUser.save();
-      res.json({ status: 'success' });
-    }
-    const saveInfo = { name, username };
-  } catch (error) {
-    console.error('error in saving user info', error);
-    res.json({ error });
+// custom middleware to check auth state
+function isAuthenticated(req, res, next) {
+  if (!req.session.isAuthenticated) {
+    return res.redirect('/auth/signin'); // redirect to sign-in route
   }
-});
+
+  next();
+};
+
+router.get('/id',
+  isAuthenticated, // check if user is authenticated
+  async function (req, res, next) {
+    try {
+      const { idTokenClaims } = req.session.account;
+      const html = `
+                <html>
+                    <head><title>Testing Azure</title></head>
+                    <body>
+                        <h1>ID Token Claims</h1>
+                        <table>
+                            <tbody>
+                                ${Object.entries(idTokenClaims).map(([key, value]) => `<tr><th>${key}</th><td>${value}</td></tr>`).join('')}
+                            </tbody>
+                        </table>
+                        </table>
+                    </body>
+                </html>
+            `;
+      res.type('html');
+      res.send(html);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.get('/profile',
+  isAuthenticated, // check if user is authenticated
+  async function (req, res, next) {
+    try {
+      const graphResponse = await graphMEFetch(GRAPH_ME_ENDPOINT, req.session.accessToken);
+      const html = `
+                <html>
+                    <head><title>Testing Azure</title></head>
+                    <body>
+                        <h1>Your profile</h1>
+                        <pre>
+${JSON.stringify(graphResponse, null, 2)}
+                        </pre>
+                        </table>
+                    </body>
+                </html>
+            `;
+
+      res.type('html');
+      res.send(html);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 module.exports = router;
