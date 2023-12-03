@@ -7,8 +7,6 @@ const express = require('express');
 const graphMEFetch = require('../fetch.js');
 const { GRAPH_ME_ENDPOINT } = require('../authConfig.js');
 
-var router = express.Router();
-
 // custom middleware to check auth state
 function isAuthenticated(req, res, next) {
   if (!req.session.isAuthenticated) {

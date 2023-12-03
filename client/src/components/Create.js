@@ -55,7 +55,9 @@ export default function Create() {
       });
       await statusCheck(res);
       let details = await res.json();
-      console.log(details);
+      // console.log(details);
+      // navigate to the discover page
+      window.location.href = '/discover';
     } catch (err) {
       console.log(err);
     }
@@ -83,7 +85,7 @@ export default function Create() {
           <input className="form-control" id='description' type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
         </div>
         <div>
-          <label className='form-label' htmlFor='places'>Path Name</label>
+          <label className='form-label' htmlFor='places'>Places</label>
           <PlacesAutocomplete onPlaceSelect={handlePlaceSelect} />
         </div>
         <button className='btn btn-success' onClick={handleClickDone}>Done</button>

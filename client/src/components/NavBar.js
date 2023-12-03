@@ -29,7 +29,7 @@ export default function NavBar({ onSearch }) {
         </form>
         <ul className="navbar-nav">
           <li className="nav-item">
-            <a className="nav-link" href="#">About Us</a>
+            <a className="nav-link" href="/about">About Us</a>
           </li>
         </ul>
       </div>

@@ -7,9 +7,6 @@ function Detail({ path }) {
       <div className="row">
         <div className="col-md-6">
           <PathDetails path={path} />
-          <div>
-            <h5>Path Preview</h5>
-          </div>
         </div>
         <div className="col-md-6">
           {/*User, Comment, Likes */}

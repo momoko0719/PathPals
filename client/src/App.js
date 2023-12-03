@@ -4,6 +4,7 @@ import NavBar from './components/NavBar';
 import Create from './components/Create';
 import Profile from './components/Profile';
 import Discover from './components/Discover';
+import About from './components/About';
 
 const SERVER_URL = 'http://localhost:3001';
 
@@ -55,6 +56,7 @@ function App() {
                 <Route path='discover' element={<Discover searchTerm={searchTerm} />} />
                 <Route path='create' element={<Create />} />
                 <Route path='profile' element={<Profile />} />
+                <Route path='about' element={<About />} />
               </Routes>
             </div>
           </div>
