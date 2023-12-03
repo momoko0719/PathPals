@@ -5,7 +5,6 @@ const session = require('express-session');
 var router = express.Router();
 
 router.get('/myIdentity', (req, res) => {
-  console.log(req.session.isAuthenticated);
   if (!req.session.isAuthenticated) {
     res.json({ status: 'loggedout' });
   } else {
