@@ -1,7 +1,10 @@
 import React from "react";
 import PathDetails from "./PathDetails";
 
-function Detail({ path }) {
+function Detail({ path, updateLike, likes }) {
+  const changeLikes = () => {
+    updateLike(likes + 1);
+  }
   return (
     <div className="container">
       <div className="row">
@@ -14,7 +17,7 @@ function Detail({ path }) {
             <h5 onClick={() => showProfile(path.username)}>{path.username}</h5>
             <p>{path.formatted_date}</p>
             <button className="btn btn-primary">
-              <i className="far fa-thumbs-up"></i> Like
+              <i className="far fa-thumbs-up" onClick={changeLikes}></i>{likes}
             </button>
           </div>
         </div>

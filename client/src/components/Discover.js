@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Modal from "react-modal";
 import Detail from "./Detail";
 
@@ -9,6 +9,7 @@ export default function Discover({ searchTerm }) {
   const [sortingOrder, setSortingOrder] = useState("descending");
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedPath, setSelectedPath] = useState(null);
+  const [likes, updateLikes] = useState(0);
 
   const openModal = (path) => {
     setSelectedPath(path);
@@ -140,7 +141,7 @@ export default function Discover({ searchTerm }) {
       <div className="content-cards row row-cols-3">
         {filteredPaths.map((path, index) => (
           <div className="col" key={index}>
-            <PathCard path={path} onPathClick={openModal} />
+            <PathCard path={path} onPathClick={openModal} likes={likes}/>
           </div>
         ))}
       </div>
@@ -150,7 +151,7 @@ export default function Discover({ searchTerm }) {
         style={customStyles}
         contentLabel="Path Details"
       >
-        {selectedPath && <Detail path={selectedPath} />}
+        {selectedPath && <Detail path={selectedPath} updateLike={updateLikes} likes={likes} />}
         <button
           onClick={() => setModalIsOpen(false)}
           className="btn-close"
@@ -192,7 +193,7 @@ function Controllers({ handleSortingCriteriaChange, renderSortingIcon }) {
   );
 }
 
-function PathCard({ path, onPathClick }) {
+function PathCard({ path, onPathClick, likes }) {
   return (
     <div className="card">
       <img src="" className="card-img-top" alt="" />
@@ -219,7 +220,7 @@ function PathCard({ path, onPathClick }) {
             </button>
             <div>
                 <span className="me-2 px-1">
-                    <i className="bi bi-hand-thumbs-up"></i> {path.likes.length}
+                    <i className="bi bi-hand-thumbs-up"></i> {likes}
                 </span>
                 <span>
                     <i className="bi bi-eye"></i> {path.num_views}
