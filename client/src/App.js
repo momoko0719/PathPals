@@ -19,7 +19,6 @@ function App() {
       .then(data => {
         setIdentityInfo(data);
       })
-      .catch(err => console.log(err));
   }, []);
 
   // if identityInfo changes, send the current user info to the server

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 import usePlacesAutocomplete from "use-places-autocomplete";
 
@@ -44,6 +44,14 @@ export default function Create() {
     }));
   }
 
+  const handleDelete = (placeId) => {
+    const updatedPlaces = path.places.filter(place => place !== placeId);
+    setPath(prevPath => ({
+      ...prevPath,
+      places: updatedPlaces
+    }));
+  };
+
   const handleClickDone = async () => {
     try {
       let res = await fetch('/api/paths', {
@@ -55,7 +63,7 @@ export default function Create() {
       });
       await statusCheck(res);
       let details = await res.json();
-      // console.log(details);
+      console.log(details);
       // navigate to the discover page
       window.location.href = '/discover';
     } catch (err) {
@@ -92,7 +100,7 @@ export default function Create() {
       </div>
       <div className='path-preview col-6'>
         This is a preview to your path!
-        <PathDetails path={path} />
+        <PathDetails path={path} onDelete={handleDelete} />
       </div>
     </div>
   );
