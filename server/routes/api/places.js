@@ -18,8 +18,6 @@ router.get('/', async (req, res) => {
       let exist = await req.models.Place.find({ place_id: req.query.placeid });
 
       if (exist.length > 0) {
-        console.log('exists in db')
-        console.log(exist);
         res.json(exist[0]);
       } else {
         // use placeId to make another request to get places details

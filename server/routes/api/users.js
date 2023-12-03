@@ -22,7 +22,7 @@ router.get('/myIdentity', (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const { user } = req.query;
-    const userInfo = await models.UserInfo.find({ username: user });
+    const userInfo = await models.User.find({ username: user });
     res.json(userInfo);
   } catch (error) {
     res.status(500).json({ status: "error", error: error });
@@ -32,15 +32,16 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     if (req.session.isAuthenticated) {
-      const { username, bio } = req.body;
-      let userInfo = await models.UserInfo.findOne({ username: username });
+      const { name, username } = req.body;
+      console.log(name, username);
+      let user = await models.User.findOne({ username: username });
 
-      if (userInfo) {
-        userInfo.bio = bio;
-        await userInfo.save();
+      if (user) {
+        // user.bio = bio;
+        // await user.save();
       } else {
-        const newUserInfo = new models.UserInfo({ username: username, bio: bio });
-        await newUserInfo.save();
+        const newUser = new models.User({ username: name, email: username });
+        await newUser.save();
       }
       res.send({ status: 'success' });
     } else {
