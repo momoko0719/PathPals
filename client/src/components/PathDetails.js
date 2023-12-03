@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 export default function PathDetails({ path }) {
-  console.log(path);
-  console.log(path.places);
   const [placesDetails, setPlacesDetails] = useState([]);
 
   useEffect(() => {
@@ -20,7 +18,6 @@ export default function PathDetails({ path }) {
     try {
       let res = await fetch(`/api/places?placeid=${placeId}`);
       let details = await res.json();
-      console.log(details);
       return details;
     } catch (err) {
       console.log(err);

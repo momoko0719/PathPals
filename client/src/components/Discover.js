@@ -36,6 +36,7 @@ export default function Discover({ searchTerm }) {
     try {
       const response = await fetch("/api/paths");
       const data = await response.json();
+      console.log(data);
       setPaths(data);
     } catch (error) {
       console.error("Error fetching paths:", error);

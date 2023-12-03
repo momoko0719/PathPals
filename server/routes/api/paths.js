@@ -14,6 +14,7 @@ router.get("/", async function (req, res, next) {
           description: path.description,
           places: path.places,
           date_created: path.date_created,
+          formatted_date : formatDate(path.date_created),
           num_views: path.num_views,
           likes: path.likes, // an array of usernames that liked this path
           shared: path.shared,
@@ -44,3 +45,11 @@ router.post('/', async (req, res) => {
 });
 
 module.exports = router;
+
+function formatDate(date){
+  return ("0" + date.getHours()).slice(-2) + ":" +
+        ("0" + date.getMinutes()).slice(-2) + " (" +
+        ("0" + date.getDate()).slice(-2) + "-" +
+        ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
+        date.getFullYear() + ") ";
+}
