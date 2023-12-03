@@ -1,7 +1,7 @@
 import React from "react";
 import PathDetails from "./PathDetails";
 
-function Detail({ path }) {
+function Popup({ path }) {
   return (
     <div className="container">
       <div className="row">
@@ -23,18 +23,18 @@ function Detail({ path }) {
   );
 }
 
-async function showProfile(username){
-  try{
+async function showProfile(username) {
+  try {
     let res = await fetch('/api/profile/' + username);
     await statusCheck(res);
     let profile = await res.json();
     console.log(profile);
     window.location.href = '/profile';
-  }catch(err){
+  } catch (err) {
     console.log(err);
   }
 }
-export default Detail;
+export default Popup;
 
 /**
    * Helper function to return the response's result text if successful, otherwise

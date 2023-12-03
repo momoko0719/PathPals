@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import Detail from "./Detail";
+import Popup from "./Popup";
 
 export default function Discover({ searchTerm }) {
   const [paths, setPaths] = useState([]);
@@ -36,7 +36,6 @@ export default function Discover({ searchTerm }) {
     try {
       const response = await fetch("/api/paths");
       const data = await response.json();
-      console.log(data);
       setPaths(data);
     } catch (error) {
       console.error("Error fetching paths:", error);
@@ -150,7 +149,7 @@ export default function Discover({ searchTerm }) {
         style={customStyles}
         contentLabel="Path Details"
       >
-        {selectedPath && <Detail path={selectedPath} />}
+        {selectedPath && <Popup path={selectedPath} />}
         <button
           onClick={() => setModalIsOpen(false)}
           className="btn-close"
@@ -214,17 +213,17 @@ function PathCard({ path, onPathClick }) {
           </div>
         </div> */}
         <div className="d-flex justify-content-between align-items-center">
-            <button className="btn btn-primary" onClick={() => onPathClick(path)}>
-                View Path
-            </button>
-            <div>
-                <span className="me-2 px-1">
-                    <i className="bi bi-hand-thumbs-up"></i> {path.likes.length}
-                </span>
-                <span>
-                    <i className="bi bi-eye"></i> {path.num_views}
-                </span>
-            </div>
+          <button className="btn btn-primary" onClick={() => onPathClick(path)}>
+            View Path
+          </button>
+          <div>
+            <span className="me-2 px-1">
+              <i className="bi bi-hand-thumbs-up"></i> {path.likes.length}
+            </span>
+            <span>
+              <i className="bi bi-eye"></i> {path.num_views}
+            </span>
+          </div>
         </div>
       </div>
     </div>

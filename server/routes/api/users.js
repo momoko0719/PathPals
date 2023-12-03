@@ -34,9 +34,9 @@ router.post('/', async (req, res) => {
     if (req.session.isAuthenticated) {
       const { name, username } = req.body;
       console.log(name, username);
-      let user = await models.User.findOne({ username: username });
+      let exist = await models.User.findOne({ email: username });
 
-      if (user) {
+      if (exist) {
         // user.bio = bio;
         // await user.save();
       } else {
