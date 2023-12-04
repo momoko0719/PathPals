@@ -19,6 +19,7 @@ router.get('/myIdentity', (req, res) => {
   }
 });
 
+// get my profile
 router.get('/', async (req, res) => {
   try {
     const { user } = req.query;
@@ -53,5 +54,6 @@ router.post('/', async (req, res) => {
   }
 })
 
+// get user's profile
 
 module.exports = router; 
