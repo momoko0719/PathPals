@@ -52,5 +52,14 @@ router.post('/', async (req, res) => {
   }
 })
 
+router.get('/myUsername', (req, res) => {
+  if (req.session.account && req.session.account.username) {
+    const username = req.session.account.username;
+    console.log('Username grabbed:', username);
+    res.json({ username });
+  } else {
+    res.status(401).json({ error: 'not logged in' });
+  }
+});
 
-module.exports = router; 
+module.exports = router;
