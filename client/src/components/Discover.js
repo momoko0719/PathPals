@@ -11,9 +11,39 @@ export default function Discover({ searchTerm }) {
   const [selectedPath, setSelectedPath] = useState(null);
 
   const openModal = (path) => {
+    if (!path._id) {
+      console.error('No _id property on path object:', path);
+      return; 
+    }
+  
+    incrementPathViews(path._id);
     setSelectedPath(path);
     setModalIsOpen(true);
   };
+  
+  
+
+  const incrementPathViews = async (pathId) => {
+    // Convert pathId to string for comparison
+    const updatedPaths = paths.map(p =>
+      p._id === pathId ? { ...p, num_views: p.num_views + 1 } : p
+    );
+    setPaths(updatedPaths);
+  
+    const updatedFilteredPaths = filteredPaths.map(p =>
+      p._id === pathId ? { ...p, num_views: p.num_views + 1 } : p
+    );
+    setFilteredPaths(updatedFilteredPaths);
+  
+    try {
+      await fetch(`/api/paths/increment-view/${pathId}`, {
+        method: 'POST'
+      });
+    } catch (error) {
+      console.error('Error updating view count:', error);
+    }
+  };
+  
 
   const customStyles = {
     content: {
