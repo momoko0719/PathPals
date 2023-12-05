@@ -51,6 +51,46 @@ router.post('/', async (req, res) => {
   }
 });
 
+// update the likes of a path
+router.post('/likes', async (req, res) => {
+  try {
+    if(req.session.isAuthenticated){
+      const {id, username} = req.body;
+      if (id && username) {
+        let path = await models.Path.findById(id);
+        if(path){
+          let users = path.likes
+          let like = path.num_likes;
+
+          // if the user already liked that path, unlike it
+          if(users.includes(username)){
+            users = users.filter((user) => {
+              return user !== username;
+            });
+            like--;
+          }else{ // otherwise, likes the path
+            users.push(username);
+            like++;
+          }
+          let updateLike = await models.Path.findByIdAndUpdate(id, {
+            num_likes: like,
+            likes : users
+          }, { new: true });
+          res.json({like: updateLike.num_likes});
+        }else{
+          res.status(400).json({ status: "error", error: 'no path matches given id' });
+        }
+      } else {
+        res.status(400).json({ status: "error", error: 'missing one or more required params' });
+      }
+    }else{
+      res.status(401).json({ error: 'not logged in' });
+    }
+  } catch (err) {
+    res.status(500).json({ status: "error", error: err.message });
+  }
+});
+
 module.exports = router;
 
 function formatDate(date) {

@@ -73,8 +73,8 @@ function App() {
             <div className='main-content col-10'>
               <Routes>
                 {/* default page */}
-                <Route index element={<Discover searchTerm={searchTerm} />} />
-                <Route path='discover' element={<Discover searchTerm={searchTerm} />} />
+                <Route index element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} />} />
+                <Route path='discover' element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} />} />
                 <Route path='create' element={<Create />} />
                 <Route path='profile' element={<Profile userInfo={identityInfo.userInfo} />} />
                 <Route path='about' element={<About />} />

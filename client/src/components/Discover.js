@@ -2,14 +2,13 @@ import React, { useState, useEffect, useCallback } from "react";
 import Modal from "react-modal";
 import Popup from "./Popup";
 
-export default function Discover({ searchTerm }) {
+export default function Discover({ searchTerm, userInfo }) {
   const [paths, setPaths] = useState([]);
   const [filteredPaths, setFilteredPaths] = useState([]);
   const [sortingCriteria, setSortingCriteria] = useState("date");
   const [sortingOrder, setSortingOrder] = useState("descending");
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedPath, setSelectedPath] = useState(null);
-  const [likes, setLikes] = useState(0);
 
   const openModal = (path) => {
     if (!path._id) {
@@ -45,6 +44,12 @@ export default function Discover({ searchTerm }) {
     }
   };
 
+  const changeLikes = (id, newLikes) => {
+    const updatedPaths = paths.map((path) =>
+      path._id === id ? { ...path, num_likes: newLikes } : path
+    );
+    setPaths(updatedPaths);
+  };
 
   const customStyles = {
     content: {
@@ -170,7 +175,7 @@ export default function Discover({ searchTerm }) {
       <div className="content-cards row row-cols-3">
         {filteredPaths.map((path, index) => (
           <div className="col" key={index}>
-            <PathCard path={path} onPathClick={openModal} likes={likes} getLike={setLikes} />
+            <PathCard path={path} onPathClick={openModal} />
           </div>
         ))}
       </div>
@@ -180,7 +185,7 @@ export default function Discover({ searchTerm }) {
         style={customStyles}
         contentLabel="Path Details"
       >
-        {selectedPath && <Popup path={selectedPath} />}
+        {selectedPath && <Popup path={selectedPath} user={userInfo} setLikes={changeLikes} />}
         <button
           onClick={() => setModalIsOpen(false)}
           className="btn-close"
@@ -222,8 +227,7 @@ function Controllers({ handleSortingCriteriaChange, renderSortingIcon }) {
   );
 }
 
-function PathCard({ path, onPathClick, likes, getLike }) {
-  getLike(path.num_likes);
+function PathCard({ path, onPathClick, likes }) {
   return (
     <div className="card">
       <img src="" className="card-img-top" alt="" />
@@ -236,7 +240,7 @@ function PathCard({ path, onPathClick, likes, getLike }) {
             </button>
             <div>
                 <span className="me-2 px-1">
-                    <i className="bi bi-hand-thumbs-up"></i> {path.likes.length}
+                    <i className="bi bi-hand-thumbs-up"></i> {path.num_likes}
                 </span>
                 <span>
                     <i className="bi bi-eye"></i> {path.num_views}
