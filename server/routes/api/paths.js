@@ -17,6 +17,7 @@ router.get("/", async function (req, res, next) {
           date_created: path.date_created,
           formatted_date: formatDate(path.date_created),
           num_views: path.num_views,
+          num_likes: path.num_likes,
           likes: path.likes, // an array of usernames that liked this path
           shared: path.shared,
         };
@@ -50,23 +51,45 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.post('/increment-view/:pathId', async (req, res) => {
+// update the likes of a path
+router.post('/likes', async (req, res) => {
   try {
-    const pathId = req.params.pathId;
-    const updatedPath = await models.Path.findByIdAndUpdate(
-      pathId, 
-      { $inc: { num_views: 1 } },
-      { new: true } 
-    );
-    console.log('Updated Path:', updatedPath);
-    res.status(200).send('View count incremented');
-  } catch (error) {
-    console.error('Error updating view count:', error);
-    res.status(500).json({ status: "error", error: error.message });
+    if(req.session.isAuthenticated){
+      const {id, username} = req.body;
+      if (id && username) {
+        let path = await models.Path.findById(id);
+        if(path){
+          let users = path.likes
+          let like = path.num_likes;
+
+          // if the user already liked that path, unlike it
+          if(users.includes(username)){
+            users = users.filter((user) => {
+              return user !== username;
+            });
+            like--;
+          }else{ // otherwise, likes the path
+            users.push(username);
+            like++;
+          }
+          let updateLike = await models.Path.findByIdAndUpdate(id, {
+            num_likes: like,
+            likes : users
+          }, { new: true });
+          res.json({like: updateLike.num_likes});
+        }else{
+          res.status(400).json({ status: "error", error: 'no path matches given id' });
+        }
+      } else {
+        res.status(400).json({ status: "error", error: 'missing one or more required params' });
+      }
+    }else{
+      res.status(401).json({ error: 'not logged in' });
+    }
+  } catch (err) {
+    res.status(500).json({ status: "error", error: err.message });
   }
 });
-
-
 
 module.exports = router;
 

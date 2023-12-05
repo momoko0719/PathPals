@@ -1,7 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import PathDetails from "./PathDetails";
 
-function Popup({ path }) {
+function Popup({ path, user, setLikes }) {
+  const [newLike, updateLike] = useState(path.num_likes);
+
+  const updateLikes = async () => {
+    try {
+      let response = await fetch("/api/paths/likes", {
+        method: "POST",
+        body: JSON.stringify({id: path._id, username: user.username}),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      let data = await response.json();
+      setLikes(path._id, data.like);
+      updateLike(data.like);
+    } catch (error) {
+      console.error("Error updating likes:", error);
+    }
+  }
+
   return (
     <div className="container">
       <div className="row">
@@ -9,12 +28,11 @@ function Popup({ path }) {
           <PathDetails path={path} />
         </div>
         <div className="col-md-6">
-          {/*User, Comment, Likes */}
           <div>
             <h5 onClick={() => showProfile(path.username)}>{path.username}</h5>
             <p>{path.formatted_date}</p>
-            <button className="btn btn-primary">
-              <i className="far fa-thumbs-up"></i> Like
+            <button className="btn btn-primary" onClick={updateLikes}>
+              <i className="far fa-thumbs-up"></i> {newLike}
             </button>
           </div>
         </div>
