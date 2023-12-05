@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Modal from "react-modal";
 import Popup from "./Popup";
 import PathCard from "./PathCard";
 
-export default function Discover({ searchTerm }) {
+export default function Discover({ searchTerm, userInfo }) {
   const [paths, setPaths] = useState([]);
   const [filteredPaths, setFilteredPaths] = useState([]);
   const [sortingCriteria, setSortingCriteria] = useState("date");
@@ -12,8 +12,44 @@ export default function Discover({ searchTerm }) {
   const [selectedPath, setSelectedPath] = useState(null);
 
   const openModal = (path) => {
+    if (!path._id) {
+      console.error('No _id property on path object:', path);
+      return;
+    }
+
+    incrementPathViews(path._id);
     setSelectedPath(path);
     setModalIsOpen(true);
+  };
+
+
+
+  const incrementPathViews = async (pathId) => {
+    // Convert pathId to string for comparison
+    const updatedPaths = paths.map(p =>
+      p._id === pathId ? { ...p, num_views: p.num_views + 1 } : p
+    );
+    setPaths(updatedPaths);
+
+    const updatedFilteredPaths = filteredPaths.map(p =>
+      p._id === pathId ? { ...p, num_views: p.num_views + 1 } : p
+    );
+    setFilteredPaths(updatedFilteredPaths);
+
+    try {
+      await fetch(`/api/paths/increment-view/${pathId}`, {
+        method: 'POST'
+      });
+    } catch (error) {
+      console.error('Error updating view count:', error);
+    }
+  };
+
+  const changeLikes = (id, newLikes) => {
+    const updatedPaths = paths.map((path) =>
+      path._id === id ? { ...path, num_likes: newLikes } : path
+    );
+    setPaths(updatedPaths);
   };
 
   const customStyles = {
@@ -150,7 +186,7 @@ export default function Discover({ searchTerm }) {
         style={customStyles}
         contentLabel="Path Details"
       >
-        {selectedPath && <Popup path={selectedPath} />}
+        {selectedPath && <Popup path={selectedPath} user={userInfo} setLikes={changeLikes} />}
         <button
           onClick={() => setModalIsOpen(false)}
           className="btn-close"
@@ -191,42 +227,3 @@ function Controllers({ handleSortingCriteriaChange, renderSortingIcon }) {
     </div>
   );
 }
-
-// function PathCard({ path, onPathClick }) {
-//   return (
-//     <div className="card">
-//       <img src="" className="card-img-top" alt="" />
-//       <div className="card-body">
-//         <h5 className="card-title">{path.path_name}</h5>
-//         <p className="card-text">{path.description}</p>
-//         {/* hide this section for now, not fully implemented */}
-//         {/* <div className="place-list">
-//           <h6>Places:</h6>
-//           <ul>
-//             {path.places.map((place, index) => (
-//               <li key={index}>{place}</li>
-//             ))}
-//           </ul>
-//           <div>
-//             <p className="card-text">{path.likes.length} likes</p>
-//             <p className="card-text">{path.num_views} views</p>
-//             <p className="card-text">Date: {path.date_created}</p>
-//           </div>
-//         </div> */}
-//         <div className="d-flex justify-content-between align-items-center">
-//           <button className="btn btn-primary" onClick={() => onPathClick(path)}>
-//             View Path
-//           </button>
-//           <div>
-//             <span className="me-2 px-1">
-//               <i className="bi bi-hand-thumbs-up"></i> {path.likes.length}
-//             </span>
-//             <span>
-//               <i className="bi bi-eye"></i> {path.num_views}
-//             </span>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
