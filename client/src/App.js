@@ -12,20 +12,41 @@ function App() {
   const [identityInfo, setIdentityInfo] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
 
+  // check if user is logged in
   useEffect(() => {
-    fetch(SERVER_URL + '/api/users/myIdentity', { credentials: 'include' })
+    fetch('/api/users/myIdentity', { credentials: 'include' })
       .then(res => res.json())
       .then(data => {
         setIdentityInfo(data);
       })
-      .then(() => { console.log(identityInfo) })
-      .catch(err => console.log(err));
   }, []);
+
+  // if identityInfo changes, send the current user info to the server
+  useEffect(() => {
+    if (identityInfo.status === 'loggedin') {
+      fetch('/api/users', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: identityInfo.userInfo.name, // e.g. Sam
+          username: identityInfo.userInfo.username // e.g. sam123@example.com
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch(err => console.log(err));
+    }
+  }, [identityInfo]);
+
 
   const handleSearch = (term) => {
     setSearchTerm(term);
   };
-
 
   return (
     <div>
@@ -42,7 +63,7 @@ function App() {
                 identityInfo.status === 'loggedin' ?
                   <>
                     <Link to='/create' className='btn btn-light'>Create</Link>
-                    <Link to='/profile' className='btn btn-light'>My Profile</Link>
+                    <Link to='/profile' className='btn btn-light'>User: {identityInfo.userInfo.name}</Link>
                     <Link to={SERVER_URL + '/auth/signout'} className='btn btn-danger'>Sign Out</Link>
                   </>
                   :
@@ -55,7 +76,7 @@ function App() {
                 <Route index element={<Discover searchTerm={searchTerm} />} />
                 <Route path='discover' element={<Discover searchTerm={searchTerm} />} />
                 <Route path='create' element={<Create />} />
-                <Route path='profile' element={<Profile />} />
+                <Route path='profile' element={<Profile userInfo={identityInfo.userInfo} />} />
                 <Route path='about' element={<About />} />
               </Routes>
             </div>

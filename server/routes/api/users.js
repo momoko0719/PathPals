@@ -19,10 +19,11 @@ router.get('/myIdentity', (req, res) => {
   }
 });
 
+// get my profile
 router.get('/', async (req, res) => {
   try {
     const { user } = req.query;
-    const userInfo = await models.UserInfo.find({ username: user });
+    const userInfo = await models.User.find({ username: user });
     res.json(userInfo);
   } catch (error) {
     res.status(500).json({ status: "error", error: error });
@@ -32,15 +33,16 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     if (req.session.isAuthenticated) {
-      const { username, bio } = req.body;
-      let userInfo = await models.UserInfo.findOne({ username: username });
+      const { name, username } = req.body;
+      console.log(name, username);
+      let exist = await models.User.findOne({ email: username });
 
-      if (userInfo) {
-        userInfo.bio = bio;
-        await userInfo.save();
+      if (exist) {
+        // user.bio = bio;
+        // await user.save();
       } else {
-        const newUserInfo = new models.UserInfo({ username: username, bio: bio });
-        await newUserInfo.save();
+        const newUser = new models.User({ username: name, email: username });
+        await newUser.save();
       }
       res.send({ status: 'success' });
     } else {
@@ -52,5 +54,14 @@ router.post('/', async (req, res) => {
   }
 })
 
+router.get('/myUsername', (req, res) => {
+  if (req.session.account && req.session.account.username) {
+    const username = req.session.account.username;
+    console.log('Username grabbed:', username);
+    res.json({ username });
+  } else {
+    res.status(401).json({ error: 'not logged in' });
+  }
+});
 
-module.exports = router; 
+module.exports = router;
