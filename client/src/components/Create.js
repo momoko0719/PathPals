@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 import usePlacesAutocomplete from "use-places-autocomplete";
+import { useLocation } from 'react-router-dom';
 
 import PathDetails from './PathDetails';
 
@@ -12,6 +13,23 @@ export default function Create() {
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
     libraries: libraries
   });
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const pathName = queryParams.get('name');
+    const description = queryParams.get('description');
+    const places = queryParams.get('places');
+
+    // Set initial state for input fields
+    setPath({
+      ...path,
+      path_name: pathName,
+      description: description,
+      places: places
+    });
+  }, [location.search]);
 
   // path that will be modified and updated
   const [path, setPath] = useState({

@@ -13,6 +13,7 @@ function Popup({ path, user, setLikes }) {
           "Content-Type": "application/json"
         }
       });
+      await statusCheck(response);
       let data = await response.json();
       setLikes(path._id, data.like);
       updateLike(data.like);
@@ -29,11 +30,16 @@ function Popup({ path, user, setLikes }) {
         </div>
         <div className="col-md-6">
           <div>
-            <h5 onClick={() => showProfile(path.username)}>{path.username}</h5>
+            <p onClick={() => showProfile(path.username)}>{path.username}</p>
+            <h1>{path.path_name}</h1>
+            <h2>{path.description}</h2>
             <p>{path.formatted_date}</p>
-            <button className="btn btn-primary" onClick={updateLikes}>
-              <i className="far fa-thumbs-up"></i> {newLike}
-            </button>
+            <hr></hr>
+            <div>
+              {/* comments */}
+            </div>
+            <span className="me-4"><i className="bi bi-hand-thumbs-up" onClick={updateLikes}></i> {newLike}</span>
+            <i class="bi bi-pencil-square" onClick={() => {editPath(path)}}></i>
           </div>
         </div>
       </div>
@@ -41,12 +47,20 @@ function Popup({ path, user, setLikes }) {
   );
 }
 
+function editPath(path) {
+  let params = new URLSearchParams();
+  params.append("name", path.path_name);
+  params.append("description", path.description);
+  params.append("places", path.places);
+  window.location.href = `/create?${params.toString()}`;
+}
+
 async function showProfile(username) {
   try {
-    let res = await fetch('/api/profile/' + username);
-    await statusCheck(res);
-    let profile = await res.json();
-    console.log(profile);
+    // let res = await fetch('/api/profile/' + username);
+    // await statusCheck(res);
+    // let profile = await res.json();
+    // console.log(profile);
     window.location.href = '/profile';
   } catch (err) {
     console.log(err);

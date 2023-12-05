@@ -25,15 +25,13 @@ export default function PathDetails({ path, onDelete }) {
 
   return (
     <div className="path-container">
-      <h1>{path.path_name}</h1>
-      <p>{path.description}</p>
       <div className='card-container'>
         {
           placesDetails.map((detail) => {
             return (
-              <div className="card" key={detail.formatted_address}>
+              <div className="card my-3" key={detail.formatted_address}>
                 <RenderCarousel photos={detail.photos} />
-                <div className="card-bodh">
+                <div className="card-bodh px-2">
                   <h2>{detail.place_name}</h2>
                   <p>{detail.formatted_address}</p>
                 </div>
@@ -74,7 +72,7 @@ function RenderCarousel({ photos }) {
             <img src={'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=' +
               photo['photo_reference'] + '&sensor=false&key=' +
               process.env.REACT_APP_GOOGLE_API_KEY}
-              className="d-block w-100" alt={`Slide ${index}`} />
+              className="d-block w-100 rounded-top" alt={`Slide ${index}`} />
           </div>
         ))}
       </div>
