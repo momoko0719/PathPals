@@ -9,6 +9,7 @@ router.get("/", async function (req, res, next) {
     paths.map(async (path) => {
       try {
         return {
+          _id: path._id,
           username: path.username,
           path_name: path.path_name,
           description: path.description,
@@ -48,6 +49,24 @@ router.post('/', async (req, res) => {
     res.status(500).json({ status: "error", error: error.message });
   }
 });
+
+router.post('/increment-view/:pathId', async (req, res) => {
+  try {
+    const pathId = req.params.pathId;
+    const updatedPath = await models.Path.findByIdAndUpdate(
+      pathId, 
+      { $inc: { num_views: 1 } },
+      { new: true } 
+    );
+    console.log('Updated Path:', updatedPath);
+    res.status(200).send('View count incremented');
+  } catch (error) {
+    console.error('Error updating view count:', error);
+    res.status(500).json({ status: "error", error: error.message });
+  }
+});
+
+
 
 module.exports = router;
 
