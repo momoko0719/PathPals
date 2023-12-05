@@ -9,7 +9,7 @@ export default function Discover({ searchTerm }) {
   const [sortingOrder, setSortingOrder] = useState("descending");
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedPath, setSelectedPath] = useState(null);
-  const [likes, updateLikes] = useState(0);
+  const [likes, setLikes] = useState(0);
 
   const openModal = (path) => {
     setSelectedPath(path);
@@ -141,7 +141,7 @@ export default function Discover({ searchTerm }) {
       <div className="content-cards row row-cols-3">
         {filteredPaths.map((path, index) => (
           <div className="col" key={index}>
-            <PathCard path={path} onPathClick={openModal} likes={likes}/>
+            <PathCard path={path} onPathClick={openModal} likes={likes} getLike={setLikes} />
           </div>
         ))}
       </div>
@@ -151,7 +151,7 @@ export default function Discover({ searchTerm }) {
         style={customStyles}
         contentLabel="Path Details"
       >
-        {selectedPath && <Detail path={selectedPath} updateLike={updateLikes} likes={likes} />}
+        {selectedPath && <Detail path={selectedPath} like={likes} getLike={setLikes} />}
         <button
           onClick={() => setModalIsOpen(false)}
           className="btn-close"
@@ -193,27 +193,14 @@ function Controllers({ handleSortingCriteriaChange, renderSortingIcon }) {
   );
 }
 
-function PathCard({ path, onPathClick, likes }) {
+function PathCard({ path, onPathClick, likes, getLike }) {
+  getLike(path.num_likes);
   return (
     <div className="card">
       <img src="" className="card-img-top" alt="" />
       <div className="card-body">
         <h5 className="card-title">{path.path_name}</h5>
         <p className="card-text">{path.description}</p>
-        {/* hide this section for now, not fully implemented */}
-        {/* <div className="place-list">
-          <h6>Places:</h6>
-          <ul>
-            {path.places.map((place, index) => (
-              <li key={index}>{place}</li>
-            ))}
-          </ul>
-          <div>
-            <p className="card-text">{path.likes.length} likes</p>
-            <p className="card-text">{path.num_views} views</p>
-            <p className="card-text">Date: {path.date_created}</p>
-          </div>
-        </div> */}
         <div className="d-flex justify-content-between align-items-center">
             <button className="btn btn-primary" onClick={() => onPathClick(path)}>
                 View Path

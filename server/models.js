@@ -15,6 +15,7 @@ async function main() {
     places: [String], // an array of place ids
     date_created: { type: Date, default: Date.now },
     num_views: { type: Number, default: 0 },
+    num_likes: { type: Number, default: 0 },
     likes: { type: [String], default: [] }, // an array of usernames that liked this path
     shared: { type: [String], default: [] } // an array of usernames that are allowed to edit this path
   });
