@@ -19,6 +19,7 @@ router.get("/", async function (req, res, next) {
       paths.map(async (path) => {
         try {
           return {
+            _id: path._id,
             username: path.username,
             path_name: path.path_name,
             description: path.description,
@@ -65,36 +66,36 @@ router.post('/', async (req, res) => {
 // update the likes of a path
 router.post('/likes', async (req, res) => {
   try {
-    if(req.session.isAuthenticated){
-      const {id, username} = req.body;
+    if (req.session.isAuthenticated) {
+      const { id, username } = req.body;
       if (id && username) {
         let path = await models.Path.findById(id);
-        if(path){
+        if (path) {
           let users = path.likes
           let like = path.num_likes;
 
           // if the user already liked that path, unlike it
-          if(users.includes(username)){
+          if (users.includes(username)) {
             users = users.filter((user) => {
               return user !== username;
             });
             like--;
-          }else{ // otherwise, likes the path
+          } else { // otherwise, likes the path
             users.push(username);
             like++;
           }
           let updateLike = await models.Path.findByIdAndUpdate(id, {
             num_likes: like,
-            likes : users
+            likes: users
           }, { new: true });
-          res.json({like: updateLike.num_likes});
-        }else{
+          res.json({ like: updateLike.num_likes });
+        } else {
           res.status(400).json({ status: "error", error: 'no path matches given id' });
         }
       } else {
         res.status(400).json({ status: "error", error: 'missing one or more required params' });
       }
-    }else{
+    } else {
       res.status(401).json({ error: 'not logged in' });
     }
   } catch (err) {

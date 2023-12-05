@@ -16,13 +16,12 @@ export default function Discover({ searchTerm, userInfo }) {
       console.error('No _id property on path object:', path);
       return;
     }
+    console.log(path);
 
     incrementPathViews(path._id);
     setSelectedPath(path);
     setModalIsOpen(true);
   };
-
-
 
   const incrementPathViews = async (pathId) => {
     // Convert pathId to string for comparison
