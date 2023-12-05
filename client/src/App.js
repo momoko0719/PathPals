@@ -12,13 +12,14 @@ function App() {
   const [identityInfo, setIdentityInfo] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
 
-  // check if user is logged in
+  // get the current user info from the server
   useEffect(() => {
     fetch('/api/users/myIdentity', { credentials: 'include' })
       .then(res => res.json())
       .then(data => {
         setIdentityInfo(data);
       })
+      .catch(err => console.log(err));
   }, []);
 
   // if identityInfo changes, send the current user info to the server
@@ -36,9 +37,6 @@ function App() {
         })
       })
         .then(res => res.json())
-        .then(data => {
-          console.log(data);
-        })
         .catch(err => console.log(err));
     }
   }, [identityInfo]);

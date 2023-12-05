@@ -4,27 +4,41 @@ var router = express.Router();
 
 // get all paths
 router.get("/", async function (req, res, next) {
-  const paths = await models.Path.find();
-  let pathsData = await Promise.all(
-    paths.map(async (path) => {
-      try {
-        return {
-          username: path.username,
-          path_name: path.path_name,
-          description: path.description,
-          places: path.places,
-          date_created: path.date_created,
-          formatted_date: formatDate(path.date_created),
-          num_views: path.num_views,
-          likes: path.likes, // an array of usernames that liked this path
-          shared: path.shared,
-        };
-      } catch (error) {
-        res.status(500).json({ status: "error", error: error });
-      }
-    })
-  );
-  res.json(pathsData);
+  try {
+    const username = req.query.username;
+    const liked = req.query.liked;
+    let paths = null;
+    if (username) {
+      paths = await models.Path.find({ username: username });
+    } else if (liked) {
+      paths = await models.Path.find({ likes: liked });
+    } else {
+      paths = await models.Path.find();
+    }
+    let pathsData = await Promise.all(
+      paths.map(async (path) => {
+        try {
+          return {
+            username: path.username,
+            path_name: path.path_name,
+            description: path.description,
+            places: path.places,
+            date_created: path.date_created,
+            formatted_date: formatDate(path.date_created),
+            num_views: path.num_views,
+            likes: path.likes, // an array of usernames that liked this path
+            shared: path.shared,
+          };
+        } catch (error) {
+          res.status(500).json({ status: "error", error: error });
+        }
+      })
+    );
+    res.json(pathsData);
+  } catch (error) {
+    res.status(500).json({ status: "error", error: error.message });
+  }
+
 });
 
 // save a new path
@@ -34,7 +48,7 @@ router.post('/', async (req, res) => {
       let username = req.session.account.username;
       let { path_name, description, places } = req.body;
       const newPath = new models.Path({
-        username: 'Sam',
+        username: username,
         path_name,
         description,
         places
