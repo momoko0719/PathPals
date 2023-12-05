@@ -63,7 +63,7 @@ function App() {
                 identityInfo.status === 'loggedin' ?
                   <>
                     <Link to='/create' className='btn btn-light'>Create</Link>
-                    <Link to='/profile' className='btn btn-light'>My Profile</Link>
+                    <Link to='/profile' className='btn btn-light'>User: {identityInfo.userInfo.name}</Link>
                     <Link to={SERVER_URL + '/auth/signout'} className='btn btn-danger'>Sign Out</Link>
                   </>
                   :
@@ -76,7 +76,7 @@ function App() {
                 <Route index element={<Discover searchTerm={searchTerm} />} />
                 <Route path='discover' element={<Discover searchTerm={searchTerm} />} />
                 <Route path='create' element={<Create />} />
-                <Route path='profile' element={<Profile />} />
+                <Route path='profile' element={<Profile userInfo={identityInfo.userInfo} />} />
                 <Route path='about' element={<About />} />
               </Routes>
             </div>

@@ -4,6 +4,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
 const cors = require('cors');
+const si = require('http-errors');
 require('dotenv').config();
 
 var apiRouter = require('./routes/api');
