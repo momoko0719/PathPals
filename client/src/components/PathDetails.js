@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function PathDetails({ path }) {
-  console.log(path);
-  console.log(path.places);
+export default function PathDetails({ path, onDelete }) {
   const [placesDetails, setPlacesDetails] = useState([]);
 
   useEffect(() => {
@@ -11,16 +9,13 @@ export default function PathDetails({ path }) {
       setPlacesDetails(details);
     };
 
-    if (path.places.length > 0) {
-      fetchAllPlaceDetails();
-    }
-  }, [path]);
+    fetchAllPlaceDetails();
+  }, [path, onDelete]);
 
   const fetchPlaceDetails = async (placeId) => {
     try {
       let res = await fetch(`/api/places?placeid=${placeId}`);
       let details = await res.json();
-      console.log(details);
       return details;
     } catch (err) {
       console.log(err);
@@ -42,6 +37,7 @@ export default function PathDetails({ path }) {
                   <h2>{detail.place_name}</h2>
                   <p>{detail.formatted_address}</p>
                 </div>
+                {window.location.href.includes('create') && <button className="btn btn-primary" onClick={() => onDelete(detail.place_id)}>Delete</button>}
               </div>
             )
           })

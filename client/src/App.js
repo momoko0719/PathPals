@@ -12,20 +12,41 @@ function App() {
   const [identityInfo, setIdentityInfo] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
 
+  // check if user is logged in
   useEffect(() => {
-    fetch(SERVER_URL + '/api/users/myIdentity', { credentials: 'include' })
+    fetch('/api/users/myIdentity', { credentials: 'include' })
       .then(res => res.json())
       .then(data => {
         setIdentityInfo(data);
       })
-      .then(() => { console.log(identityInfo) })
-      .catch(err => console.log(err));
   }, []);
+
+  // if identityInfo changes, send the current user info to the server
+  useEffect(() => {
+    if (identityInfo.status === 'loggedin') {
+      fetch('/api/users', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: identityInfo.userInfo.name, // e.g. Sam
+          username: identityInfo.userInfo.username // e.g. sam123@example.com
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch(err => console.log(err));
+    }
+  }, [identityInfo]);
+
 
   const handleSearch = (term) => {
     setSearchTerm(term);
   };
-
 
   return (
     <div>
