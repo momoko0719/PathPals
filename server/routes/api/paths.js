@@ -93,6 +93,50 @@ router.post('/likes', async (req, res) => {
   }
 });
 
+// get all comments for each path
+router.get("/comments", async (req, res) => {
+  try{
+    let docs = await models.Comment.aggregate([
+      {
+        $group: {
+          _id: "$path",
+          comments: {$push: {username: "$username", comment: "$comment"}}
+        }
+      }
+    ]);
+    res.json(docs);
+  }catch(err){
+    res.status(500).json({ status: "error", error: err.message });
+  }
+});
+
+// add new comments
+router.post("/comments/:pathId", async (req, res) => {
+  try{
+    let id = req.params.pathId;
+
+    let existingId = await models.Path.findById(id);
+    if(existingId){
+      let { username, comment } = req.body;
+      if(username && comment){
+        let newComment = new models.Comment({
+          username: username,
+          comment: comment,
+          path: id
+        });
+        let returnedCmt = await newComment.save();
+        res.json(returnedCmt);
+      }else{
+        res.status(400).json({ status: "error", error: 'missing one or more required params' });
+      }
+    } else{
+      res.status(400).json({ status: "error", error: 'cannot find any path that matches the given id' });
+    }
+  }catch(err){
+    res.status(500).json({ status: "error", error: err.message });
+  }
+});
+
 module.exports = router;
 
 function formatDate(date) {
