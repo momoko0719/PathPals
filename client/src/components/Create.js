@@ -1,35 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 import usePlacesAutocomplete from "use-places-autocomplete";
-import { useLocation } from 'react-router-dom';
 
 import PathDetails from './PathDetails';
 
 const libraries = ['places'];
 
-export default function Create() {
+export default function Create({ editPath }) {
   // loads Google places autocomplete
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
     libraries: libraries
   });
 
-  const location = useLocation();
-
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const pathName = queryParams.get('name');
-    const description = queryParams.get('description');
-    const places = queryParams.get('places');
-
-    // Set initial state for input fields
-    setPath({
-      ...path,
-      path_name: pathName,
-      description: description,
-      places: places
-    });
-  }, [location.search]);
+    if(editPath){
+      setPath({
+        path_name: editPath.path_name,
+        description: editPath.description,
+        places: editPath.places
+      });
+    }
+  }, [editPath]);
 
   // path that will be modified and updated
   const [path, setPath] = useState({
@@ -104,11 +96,11 @@ export default function Create() {
       <div className='path-editor col-6'>
         <div>
           <label className='form-label' htmlFor='path_name'>Path Name</label>
-          <input className="form-control" id='path_name' type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
+          <input className="form-control" id='path_name' value={editPath.path_name} type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
         </div>
         <div>
           <label className='form-label' htmlFor='description'>Description</label>
-          <input className="form-control" id='description' type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
+          <input className="form-control" id='description' value={editPath.description} type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
         </div>
         <div>
           <label className='form-label' htmlFor='places'>Places</label>
@@ -192,3 +184,4 @@ async function statusCheck(res) {
   }
   return res;
 }
+

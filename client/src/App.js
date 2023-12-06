@@ -11,6 +11,7 @@ const SERVER_URL = 'http://localhost:3001';
 function App() {
   const [identityInfo, setIdentityInfo] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
+  const [path, fillForm] = useState({});
 
   // check if user is logged in
   useEffect(() => {
@@ -73,9 +74,9 @@ function App() {
             <div className='main-content col-10'>
               <Routes>
                 {/* default page */}
-                <Route index element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} />} />
-                <Route path='discover' element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} />} />
-                <Route path='create' element={<Create />} />
+                <Route index element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} fillForm={fillForm} />} />
+                <Route path='discover' element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} fillForm={fillForm} />} />
+                <Route path='create' element={<Create editPath={path} />} />
                 <Route path='profile' element={<Profile userInfo={identityInfo.userInfo} />} />
                 <Route path='about' element={<About />} />
               </Routes>

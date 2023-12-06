@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import PathDetails from "./PathDetails";
 
-function Popup({ path, user, setLikes }) {
+function Popup({ path, user, setLikes, fillForm }) {
   const [newLike, updateLike] = useState(path.num_likes);
+  const [hasLiked, update] = useState(false);
+  const history = useNavigate()
 
   const updateLikes = async () => {
     try {
@@ -15,6 +18,7 @@ function Popup({ path, user, setLikes }) {
       });
       await statusCheck(response);
       let data = await response.json();
+      update(data.hasLiked);
       setLikes(path._id, data.like);
       updateLike(data.like);
     } catch (error) {
@@ -38,8 +42,12 @@ function Popup({ path, user, setLikes }) {
             <div>
               {/* comments */}
             </div>
-            <span className="me-4"><i className="bi bi-hand-thumbs-up" onClick={updateLikes}></i> {newLike}</span>
-            <i class="bi bi-pencil-square" onClick={() => {editPath(path)}}></i>
+            <div>
+              <input className="form-control" id='comment' type="text" />
+              <span className="me-4"><i className={hasLiked ? "bi bi-hand-thumbs-up-fill" : "bi bi-hand-thumbs-up"} onClick={updateLikes}></i> {newLike}</span>
+              <span className="me-4"><i className="bi bi-chat"></i> {0}</span>
+              <i className="bi bi-pencil-square" onClick={() => {editPath(path, fillForm, history)}}></i>
+            </div>
           </div>
         </div>
       </div>
@@ -47,12 +55,15 @@ function Popup({ path, user, setLikes }) {
   );
 }
 
-function editPath(path) {
-  let params = new URLSearchParams();
-  params.append("name", path.path_name);
-  params.append("description", path.description);
-  params.append("places", path.places);
-  window.location.href = `/create?${params.toString()}`;
+function editPath(path, fillForm, history) {
+  // send info over to create component
+  let editPath = {
+    path_name: path.path_name,
+    description: path.description,
+    places: path.places
+  }
+  fillForm(editPath);
+  history("/create");
 }
 
 async function showProfile(username) {

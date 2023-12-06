@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Modal from "react-modal";
 import Popup from "./Popup";
 
-export default function Discover({ searchTerm, userInfo }) {
+export default function Discover({ searchTerm, userInfo, fillForm }) {
   const [paths, setPaths] = useState([]);
   const [filteredPaths, setFilteredPaths] = useState([]);
   const [sortingCriteria, setSortingCriteria] = useState("date");
@@ -185,7 +185,7 @@ export default function Discover({ searchTerm, userInfo }) {
         style={customStyles}
         contentLabel="Path Details"
       >
-        {selectedPath && <Popup path={selectedPath} user={userInfo} setLikes={changeLikes} />}
+        {selectedPath && <Popup path={selectedPath} user={userInfo} setLikes={changeLikes} fillForm={fillForm} />}
         <button
           onClick={() => setModalIsOpen(false)}
           className="btn-close"
@@ -227,7 +227,7 @@ function Controllers({ handleSortingCriteriaChange, renderSortingIcon }) {
   );
 }
 
-function PathCard({ path, onPathClick, likes }) {
+function PathCard({ path, onPathClick }) {
   return (
     <div className="card">
       <img src="" className="card-img-top" alt="" />
@@ -240,7 +240,7 @@ function PathCard({ path, onPathClick, likes }) {
             </button>
             <div>
                 <span className="me-2 px-1">
-                    <i className="bi bi-hand-thumbs-up"></i> {path.num_likes}
+                    <i className= "bi bi-hand-thumbs-up"></i> {path.num_likes}
                 </span>
                 <span>
                     <i className="bi bi-eye"></i> {path.num_views}
