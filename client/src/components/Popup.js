@@ -1,34 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import PathDetails from "./PathDetails";
-import { ErrorHandling, statusCheck } from "../utils";
 
 function Popup({ path, user, setLikes, fillForm }) {
+  console.log(path, user);
   const [newLike, updateLike] = useState(path.num_likes);
   const [comments, setComments] = useState([]);
   const [numComments, updateNumComments] = useState(0);
   const [hasLiked, setHasLiked] = useState(path.likes.includes(user.username));
-  const [havePermission, updatePermission] = useState(path.shared);
   const history = useNavigate()
 
   useEffect(() => {
-    const fetching = async() => {
+    const fetching = async () => {
       await fetchComments();
     };
 
     fetching();
   }, [path]);
 
-  const fetchComments = async() => {
-    try{
+  const fetchComments = async () => {
+    try {
       let res = await fetch(`/api/paths/comments/${path._id}`);
-      await statusCheck(res);
       res = await res.json();
+      console.log(res);
       setComments(res);
       updateNumComments(res.length);
-    }catch(err){
+    } catch (err) {
       console.log(err);
-      ErrorHandling(err.message);
     }
   }
 
@@ -43,12 +41,12 @@ function Popup({ path, user, setLikes, fillForm }) {
       });
       await statusCheck(response);
       let data = await response.json();
+      console.log(data);
       setLikes(path._id, data.like, data.likes);
       updateLike(data.like);
       setHasLiked(data.likes.includes(user.username));
     } catch (error) {
       console.error("Error updating likes:", error);
-      ErrorHandling(error.message);
     }
   };
 
@@ -67,50 +65,30 @@ function Popup({ path, user, setLikes, fillForm }) {
       }
     } catch (error) {
       console.error("Error deleting path:", error);
-      ErrorHandling("Error deleting path: " + error.message);
     }
   };
 
-  const addComment = async (event) => {
+  const addComment = async (path, username, event) => {
     try {
       let response = await fetch(`/api/paths/comments/${path._id}`, {
         method: "POST",
-        body: JSON.stringify({username: user.username, comment: event.target.value}),
+        body: JSON.stringify({ username: username, comment: event.target.value }),
         headers: {
           "Content-Type": "application/json"
         }
       });
       await statusCheck(response);
       let data = await response.json();
-      if(comments.length === 0){
+      if (comments.length === 0) {
         setComments([data]);
         updateNumComments(1);
-      }else{
+      } else {
         setComments([...comments, data]);
         updateNumComments(numComments + 1);
       }
       event.target.value = "";
     } catch (error) {
       console.error(error);
-      ErrorHandling(error.message);
-    }
-  }
-
-  const getAccess = async () => {
-    try {
-      let response = await fetch(`/api/paths/edit`, {
-        method: "POST",
-        body: JSON.stringify({pathId: path._id}),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-      await statusCheck(response);
-      let data = await response.json();
-      updatePermission(data);
-    } catch (error) {
-      console.error(error);
-      ErrorHandling(error.message);
     }
   }
 
@@ -130,7 +108,7 @@ function Popup({ path, user, setLikes, fillForm }) {
             <div id="comments">
               {comments.length > 0 &&
                 comments.map((comment) => {
-                  return(
+                  return (
                     <div key={comment.id} className="my-1 mx-1">
                       <strong>{comment.username}</strong>
                       <p className="mb-0">{comment.comment}</p>
@@ -142,16 +120,13 @@ function Popup({ path, user, setLikes, fillForm }) {
             </div>
             <div>
               <input className="form-control" id='comment' type="text"
-                     onKeyDown={(e) => {if(e.key === "Enter"){addComment(e);}}}/>
+                onKeyDown={(e) => { if (e.key === "Enter") { addComment(path, user.username, e); } }} />
               <span className="me-4"><i className={hasLiked ? "bi bi-hand-thumbs-up-fill" : "bi bi-hand-thumbs-up"} onClick={updateLikes}></i> {newLike}</span>
               <span className="me-4"><i className="bi bi-chat"></i> {numComments}</span>
-              {(user && user.username === path.username) && <i className="bi bi-pencil-square" onClick={() => {editPath(path, fillForm, history)}}></i>}
+              {(user && path.username === user.username) && <span className="me-4"><i className="bi bi-pencil-square" onClick={() => { editPath(path, fillForm, history) }}></i></span>}
+              {(user && path.username === user.username) && <span className="me-4"><i className="bi bi-trash" onClick={deletePath}></i></span>}
             </div>
           </div>
-          {(user && (path.username === user.username || havePermission.includes(user.username)))
-            && <button className="btn btn-danger my-2" onClick={deletePath}>Delete</button>}
-          {(user && (user.username !== path.username && !havePermission.includes(user.username)))
-            && <button className="btn btn-info my-2" onClick={getAccess}>Request Access</button>}
         </div>
       </div>
     </div>
@@ -169,7 +144,7 @@ function editPath(path, fillForm, history) {
   history("/create");
 }
 
-function formatCommentDate(date){
+function formatCommentDate(date) {
   let onlyDate = date.split("T")[0];
   let splitDate = onlyDate.split("-");
   return splitDate[1] + "-" + splitDate[2];
@@ -179,3 +154,17 @@ function showProfile() {
   window.location.href = '/profile';
 }
 export default Popup;
+
+/**
+   * Helper function to return the response's result text if successful, otherwise
+   * returns the rejected Promise result with an error status and corresponding text
+   * @param {object} res - response to check for success/error
+   * @return {object} - valid response if response was successful, otherwise rejected
+   *                    Promise result
+   */
+async function statusCheck(res) {
+  if (!res.ok) {
+    throw new Error(await res.text());
+  }
+  return res;
+}

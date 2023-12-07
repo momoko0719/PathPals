@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import Popup from "./Popup";
 import PathCard from "./PathCard";
-import { ErrorHandling, statusCheck } from "../utils";
 
 export default function Discover({ searchTerm, userInfo, fillForm }) {
   const [paths, setPaths] = useState([]);
@@ -36,17 +35,15 @@ export default function Discover({ searchTerm, userInfo, fillForm }) {
     setFilteredPaths(updatedFilteredPaths);
 
     try {
-      let res = await fetch('/api/paths/views', {
+      await fetch('/api/paths/views', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ pathId: pathId })
       });
-      await statusCheck(res);
     } catch (error) {
       console.error('Error updating view count:', error);
-      ErrorHandling(error.message);
     }
   };
 
@@ -77,12 +74,10 @@ export default function Discover({ searchTerm, userInfo, fillForm }) {
   const fetchPaths = async () => {
     try {
       const response = await fetch("/api/paths");
-      await statusCheck(response);
       const data = await response.json();
       setPaths(data);
     } catch (error) {
       console.error("Error fetching paths:", error);
-      ErrorHandling("Error fetching paths: " + error.message);
     }
   };
 
@@ -181,6 +176,9 @@ export default function Discover({ searchTerm, userInfo, fillForm }) {
         />
       </div>
       <div className="content-cards row row-cols-3">
+        {filteredPaths.length === 0 && (
+          <p className="text-center">No paths found</p>
+        )}
         {filteredPaths.map((path, index) => (
           <div className="col" key={index}>
             <PathCard path={path} onPathClick={openModal} user={userInfo} />
@@ -194,7 +192,7 @@ export default function Discover({ searchTerm, userInfo, fillForm }) {
         contentLabel="Path Details"
       >
         {selectedPath &&
-        <Popup path={selectedPath} user={userInfo} setLikes={changeLikes} fillForm={fillForm} />}
+          <Popup path={selectedPath} user={userInfo} setLikes={changeLikes} fillForm={fillForm} />}
 
         <button
           onClick={() => setModalIsOpen(false)}

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function NavBar({ onSearch }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -10,6 +12,7 @@ export default function NavBar({ onSearch }) {
   const handleSearchSubmit = (event) => {
     event.preventDefault();
     onSearch(searchTerm);
+    navigate('/');
   };
 
   return (

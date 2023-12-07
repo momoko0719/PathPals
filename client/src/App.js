@@ -9,7 +9,6 @@ import About from './components/About';
 const SERVER_URL = 'http://localhost:3001';
 
 function App() {
-  console.log('why');
   const [identityInfo, setIdentityInfo] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [formInfo, fillForm] = useState(null);
@@ -77,7 +76,7 @@ function App() {
                 <Route index element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} fillForm={fillForm} />} />
                 <Route path='/' element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} fillForm={fillForm} />} />
                 <Route path='create' element={<Create formInfo={formInfo} />} />
-                <Route path='profile' element={<Profile />} />
+                <Route path='profile' element={<Profile fillForm={fillForm} />} />
                 <Route path='about' element={<About />} />
               </Routes>
             </div>
