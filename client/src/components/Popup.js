@@ -127,8 +127,8 @@ function Popup({ path, user, setLikes, fillForm }) {
             <div className="my-2">
               <span className="me-4 btn"><i className={hasLiked ? "bi bi-hand-thumbs-up-fill" : "bi bi-hand-thumbs-up"} onClick={updateLikes}></i> {newLike}</span>
               <span className="me-4 btn"><i className="bi bi-chat"></i> {numComments}</span>
-              {(user && path.username === user.username) && <span className="me-4"><i className="bi bi-pencil-square" onClick={() => { editPath(path, fillForm, history) }}></i></span>}
-              {(user && path.username === user.username) && <span className="me-4"><i className="bi bi-trash" onClick={deletePath}></i></span>}
+              {(user && path.username === user.username) && <span className="me-4 btn"><i className="bi bi-pencil-square" onClick={() => { editPath(path, fillForm, history) }}></i></span>}
+              {(user && path.username === user.username) && <span className="me-4 btn"><i className="bi bi-trash" onClick={deletePath}></i></span>}
             </div>
           </div>
         </div>
