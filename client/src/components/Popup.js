@@ -5,6 +5,7 @@ import PathDetails from "./PathDetails";
 function Popup({ path, user, setLikes, fillForm }) {
   const [newLike, updateLike] = useState(path.num_likes);
   const [comments, setComments] = useState([]);
+  const [numComments, updateNumComments] = useState(0);
   const [hasLiked, setHasLiked] = useState(path.likes.includes(user.username));
   const history = useNavigate()
 
@@ -21,6 +22,7 @@ function Popup({ path, user, setLikes, fillForm }) {
       let res = await fetch(`/api/paths/comments/${path._id}`);
       res = await res.json();
       setComments(res);
+      updateNumComments(res.length);
     }catch(err){
       console.log(err);
     }
@@ -77,8 +79,10 @@ function Popup({ path, user, setLikes, fillForm }) {
       let data = await response.json();
       if(comments.length === 0){
         setComments([data]);
+        updateNumComments(1);
       }else{
         setComments([...comments, data]);
+        updateNumComments(numComments + 1);
       }
       event.target.value = "";
     } catch (error) {
@@ -116,7 +120,7 @@ function Popup({ path, user, setLikes, fillForm }) {
               <input className="form-control" id='comment' type="text"
                      onKeyDown={(e) => {if(e.key === "Enter"){addComment(path, user.username, e);}}}/>
               <span className="me-4"><i className={hasLiked ? "bi bi-hand-thumbs-up-fill" : "bi bi-hand-thumbs-up"} onClick={updateLikes}></i> {newLike}</span>
-              <span className="me-4"><i className="bi bi-chat"></i> {0}</span>
+              <span className="me-4"><i className="bi bi-chat"></i> {numComments}</span>
               <i className="bi bi-pencil-square" onClick={() => {editPath(path, fillForm, history)}}></i>
             </div>
           </div>
