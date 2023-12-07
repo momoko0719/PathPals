@@ -47,9 +47,9 @@ export default function Discover({ searchTerm, userInfo, fillForm }) {
     }
   };
 
-  const changeLikes = (id, newLikes) => {
+  const changeLikes = (id, newLikes, totalLikes) => {
     const updatedPaths = paths.map((path) =>
-      path._id === id ? { ...path, num_likes: newLikes } : path
+      path._id === id ? { ...path, num_likes: newLikes, likes: totalLikes } : path
     );
     setPaths(updatedPaths);
   };
@@ -178,7 +178,7 @@ export default function Discover({ searchTerm, userInfo, fillForm }) {
       <div className="content-cards row row-cols-3">
         {filteredPaths.map((path, index) => (
           <div className="col" key={index}>
-            <PathCard path={path} onPathClick={openModal} />
+            <PathCard path={path} onPathClick={openModal} user={userInfo} />
           </div>
         ))}
       </div>
