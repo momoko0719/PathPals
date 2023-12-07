@@ -1,42 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import Modal from "react-modal";
 import Popup from "./Popup";
 import PathCard from './PathCard';
 import { ErrorHandling } from "../utils";
 
-export default function Profile({ identityInfo }) {
+export default function Profile() {
+  const identityInfo = JSON.parse(sessionStorage.getItem('identityInfo'));
   const [userInfo, setUserInfo] = useState();
-  useEffect(() => {
-    // This effect will run once when the component mounts, and anytime 'identityInfo' changes
-    if (identityInfo) {
-      // If 'identityInfo' is provided, use it to set the user info
-      setUserInfo(identityInfo.userInfo);
-    } else {
-      // If 'identityInfo' is not provided, retrieve it from sessionStorage
-      const storedIdentityInfo = sessionStorage.getItem('identityInfo');
-      if (storedIdentityInfo) {
-        setUserInfo(JSON.parse(storedIdentityInfo).userInfo);
-      }
-    }
-  }, [identityInfo]);
-
   const [paths, setPaths] = useState([]);
-  const [currentTab, setCurrentTab] = useState('Mine'); // ['Mine', 'Liked']
+  const [currentTab, setCurrentTab] = useState('Mine'); // ['Mine', 'Liked', 'Shared With Me]
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedPath, setSelectedPath] = useState(null);
-  const [bio, setBio] = useState(userInfo?.bio || '');
+  const [bio, setBio] = useState('');
   const [editBio, setEditBio] = useState(false);
+  useEffect(() => {
+    if (identityInfo) {
+      fetch(`/api/users?user=${identityInfo.userInfo.username}`)
+        .then(res => res.json())
+        .then(data => {
+          setUserInfo(data);
+          console.log(data);
+        })
+        .catch(err => console.log(err));
+    }
+  }, []);
 
   useEffect(() => {
-    if (userInfo && userInfo.username) {
-      // const queryParam = currentTab === 'Mine' ? `username=${userInfo.username}` : `liked=${userInfo.username}`;
+    if (userInfo && userInfo.email) {
       let queryParam;
       if (currentTab === 'Mine') {
-        queryParam = `username=${userInfo.username}`;
+        queryParam = `username=${userInfo.email}`;
       } else if (currentTab === 'Liked') {
-        queryParam = `liked=${userInfo.username}`;
+        queryParam = `liked=${userInfo.email}`;
       } else {
-        queryParam = `shared=${userInfo.username}`;
+        queryParam = `shared=${userInfo.email}`;
       }
 
       // Fetch paths based on the current tab
@@ -71,21 +68,17 @@ export default function Profile({ identityInfo }) {
     fetch('/api/users/updateBio', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({bio})
+      body: JSON.stringify({ bio: bio, username: userInfo.username })
     })
-    .then(res => res.json())
-    .then(data => {
-      if(data.success) {
-        setEditBio(false);
-        console.log('Bio saved:', bio);
-      } else {
-        console.error('Error saving bio:', data.error);
-      }
-    })
-    .catch(err => {
-      console.log(err);
-      ErrorHandling(err.message);
-    });
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          setEditBio(false);
+        } else {
+          console.error('Error saving bio:', data.error);
+        }
+      })
+      .catch(err => console.log(err));
   };
 
   const customStyles = {
@@ -109,7 +102,7 @@ export default function Profile({ identityInfo }) {
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">Name:</h5>
-              <p className="card-text">{userInfo.name}</p>
+              <p className="card-text">{userInfo.username}</p>
               <h5 className="card-title">Email:</h5>
               <p className="card-text">{userInfo.email}</p>
             </div>

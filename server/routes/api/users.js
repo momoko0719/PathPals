@@ -23,24 +23,21 @@ router.get('/myIdentity', (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const { user } = req.query;
-    const userInfo = await models.User.find({ username: user });
+    const userInfo = await models.User.findOne({ email: user });
     res.json(userInfo);
   } catch (error) {
     res.status(500).json({ status: "error", error: error });
   }
 });
 
+// save a new user
 router.post('/', async (req, res) => {
   try {
     if (req.session.isAuthenticated) {
       const { name, username } = req.body;
-      console.log(name, username);
       let exist = await models.User.findOne({ email: username });
 
-      if (exist) {
-        // user.bio = bio;
-        // await user.save();
-      } else {
+      if (!exist) {
         const newUser = new models.User({ username: name, email: username });
         await newUser.save();
       }
@@ -49,16 +46,16 @@ router.post('/', async (req, res) => {
       res.status(401).json({ error: 'not logged in' });
     }
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ status: "error", error: error.message });
   }
 });
 
+// update bio
 router.post('/updateBio', async (req, res) => {
   try {
     if (req.session.isAuthenticated) {
-      const { bio } = req.body;
-      const user = await models.User.findOne({ username: req.session.account.username });
+      const { username, bio } = req.body;
+      const user = await models.User.findOne({ email: username });
       user.bio = bio;
       await user.save();
       res.send({ status: 'success' });
@@ -66,7 +63,6 @@ router.post('/updateBio', async (req, res) => {
       res.status(401).json({ error: 'not logged in' });
     }
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ status: "error", error: error.message });
   }
 });

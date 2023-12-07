@@ -20,6 +20,7 @@ router.get('/', async (req, res) => {
       if (exist.length > 0) {
         res.json(exist[0]);
       } else {
+        console.log('making fetch call')
         // use placeId to make another request to get places details
         const params = {
           place_id: req.query.placeid,
@@ -28,6 +29,7 @@ router.get('/', async (req, res) => {
         }
 
         const response = await client.placeDetails({ params: params });
+        console.log(response.data.result);
         // save the place to mongodb with the placeId as the key
         await addNewPlace(response.data.result, req.query.placeid);
         res.json(response.data.result);
@@ -42,6 +44,9 @@ router.get('/', async (req, res) => {
 
 async function addNewPlace(place, placeid) {
   // dropthe html_attributions key from each photo object
+  if (!place.photos) {
+    place.photos = [];
+  }
   place.photos.forEach((photo) => {
     delete photo.html_attributions;
   });

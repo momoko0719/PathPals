@@ -18,6 +18,7 @@ export default function PathDetails({ path, onDelete }) {
       let res = await fetch(`/api/places?placeid=${placeId}`);
       await statusCheck(res);
       let details = await res.json();
+      console.log(details);
       return details;
     } catch (err) {
       console.log(err);
@@ -33,7 +34,7 @@ export default function PathDetails({ path, onDelete }) {
           placesDetails.map((detail) => {
             return (
               <div className="card my-3" key={detail.formatted_address}>
-                <RenderCarousel photos={detail.photos} />
+                {detail.photos && <RenderCarousel photos={detail.photos} />}
                 <div className="card-bodh px-2">
                   <h2>{detail.place_name}</h2>
                   <p>{detail.formatted_address}</p>
