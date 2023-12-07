@@ -30,6 +30,7 @@ router.get('/', async (req, res) => {
   }
 });
 
+// save a new user
 router.post('/', async (req, res) => {
   try {
     if (req.session.isAuthenticated) {
@@ -37,10 +38,7 @@ router.post('/', async (req, res) => {
       console.log(name, username);
       let exist = await models.User.findOne({ email: username });
 
-      if (exist) {
-        // user.bio = bio;
-        // await user.save();
-      } else {
+      if (!exist) {
         const newUser = new models.User({ username: name, email: username });
         await newUser.save();
       }
@@ -54,11 +52,12 @@ router.post('/', async (req, res) => {
   }
 });
 
+// update bio
 router.post('/updateBio', async (req, res) => {
   try {
     if (req.session.isAuthenticated) {
-      const { bio } = req.body;
-      const user = await models.User.findOne({ username: req.session.account.username });
+      const { username, bio } = req.body;
+      const user = await models.User.findOne({ email: username });
       user.bio = bio;
       await user.save();
       res.send({ status: 'success' });

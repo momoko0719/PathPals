@@ -23,12 +23,11 @@ export default function Profile({ identityInfo }) {
   const [currentTab, setCurrentTab] = useState('Mine'); // ['Mine', 'Liked']
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedPath, setSelectedPath] = useState(null);
-  const [bio, setBio] = useState(userInfo?.bio || '');
+  const [bio, setBio] = useState('');
   const [editBio, setEditBio] = useState(false);
 
   useEffect(() => {
     if (userInfo && userInfo.username) {
-      // const queryParam = currentTab === 'Mine' ? `username=${userInfo.username}` : `liked=${userInfo.username}`;
       let queryParam;
       if (currentTab === 'Mine') {
         queryParam = `username=${userInfo.username}`;
@@ -69,18 +68,17 @@ export default function Profile({ identityInfo }) {
     fetch('/api/users/updateBio', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({bio})
+      body: JSON.stringify({ bio: bio, username: userInfo.username })
     })
-    .then(res => res.json())
-    .then(data => {
-      if(data.success) {
-        setEditBio(false);
-        console.log('Bio saved:', bio);
-      } else {
-        console.error('Error saving bio:', data.error);
-      }
-    })
-    .catch(err => console.log(err));
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          setEditBio(false);
+        } else {
+          console.error('Error saving bio:', data.error);
+        }
+      })
+      .catch(err => console.log(err));
   };
 
   const customStyles = {
@@ -106,7 +104,7 @@ export default function Profile({ identityInfo }) {
               <h5 className="card-title">Name:</h5>
               <p className="card-text">{userInfo.name}</p>
               <h5 className="card-title">Email:</h5>
-              <p className="card-text">{userInfo.email}</p>
+              <p className="card-text">{userInfo.username}</p>
             </div>
           </div>
         </div>
@@ -128,7 +126,7 @@ export default function Profile({ identityInfo }) {
                 </>
               ) : (
                 <>
-                  <p className="card-text">{userInfo.bio}</p>
+                  <p className="card-text">{bio}</p>
                   <button
                     className="btn btn-primary"
                     onClick={() => setEditBio(true)}
