@@ -70,6 +70,12 @@ main {
   }
 }
 
+/* popup styles */
+.comment {
+  font-size: 12px;
+  color: #767676;
+}
+
 /* profile page styles */
 .profile {
 

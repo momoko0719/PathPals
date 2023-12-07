@@ -3,7 +3,7 @@ import Modal from "react-modal";
 import Popup from "./Popup";
 import PathCard from "./PathCard";
 
-export default function Discover({ searchTerm, userInfo }) {
+export default function Discover({ searchTerm, userInfo, fillForm }) {
   const [paths, setPaths] = useState([]);
   const [filteredPaths, setFilteredPaths] = useState([]);
   const [sortingCriteria, setSortingCriteria] = useState("date");
@@ -188,7 +188,7 @@ export default function Discover({ searchTerm, userInfo }) {
         style={customStyles}
         contentLabel="Path Details"
       >
-        {selectedPath && <Popup path={selectedPath} user={userInfo} setLikes={changeLikes} />}
+        {selectedPath && <Popup path={selectedPath} user={userInfo} setLikes={changeLikes} fillForm={fillForm} />}
         <button
           onClick={() => setModalIsOpen(false)}
           className="btn-close"

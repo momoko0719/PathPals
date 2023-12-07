@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 import usePlacesAutocomplete from "use-places-autocomplete";
 
@@ -6,12 +6,22 @@ import PathDetails from './PathDetails';
 
 const libraries = ['places'];
 
-export default function Create() {
+export default function Create({ editPath }) {
   // loads Google places autocomplete
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
     libraries: libraries
   });
+
+  useEffect(() => {
+    if(editPath){
+      setPath({
+        path_name: editPath.path_name,
+        description: editPath.description,
+        places: editPath.places
+      });
+    }
+  }, [editPath]);
 
   // path that will be modified and updated
   const [path, setPath] = useState({
@@ -92,11 +102,11 @@ export default function Create() {
         </div>
         <div>
           <label className='form-label' htmlFor='path_name'>Path Name</label>
-          <input className="form-control" id='path_name' type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
+          <input className="form-control" id='path_name' value={editPath.path_name} type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
         </div>
         <div>
           <label className='form-label' htmlFor='description'>Description</label>
-          <textarea className="form-control" id='description' type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
+          <input className="form-control" id='description' value={editPath.description} type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
         </div>
         <div>
           <label className='form-label' htmlFor='places'>Places</label>
@@ -168,16 +178,10 @@ function PlacesAutocomplete({ onPlaceSelect }) {
   );
 }
 
-/**
-   * Helper function to return the response's result text if successful, otherwise
-   * returns the rejected Promise result with an error status and corresponding text
-   * @param {object} res - response to check for success/error
-   * @return {object} - valid response if response was successful, otherwise rejected
-   *                    Promise result
-   */
 async function statusCheck(res) {
   if (!res.ok) {
     throw new Error(await res.text());
   }
   return res;
 }
+
