@@ -18,6 +18,7 @@ function App() {
       .then(res => res.json())
       .then(data => {
         setIdentityInfo(data);
+        sessionStorage.setItem('identityInfo', JSON.stringify(data));
       })
       .catch(err => console.log(err));
   }, []);
@@ -56,7 +57,7 @@ function App() {
           <div className='row'>
             <div className='side-panel col-2 d-flex flex-column'>
               {/* link routes to correspond buttons */}
-              <Link to='/discover' className='btn btn-light'>Discover</Link>
+              <Link to='/' className='btn btn-light'>Discover</Link>
               {
                 identityInfo.status === 'loggedin' ?
                   <>
@@ -72,18 +73,15 @@ function App() {
               <Routes>
                 {/* default page */}
                 <Route index element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} />} />
-                <Route path='discover' element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} />} />
+                <Route path='/' element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} />} />
                 <Route path='create' element={<Create />} />
-                <Route path='profile' element={<Profile userInfo={identityInfo.userInfo} />} />
+                <Route path='profile' element={<Profile userInfo={identityInfo} />} />
                 <Route path='about' element={<About />} />
               </Routes>
             </div>
           </div>
         </div>
       </main>
-      <footer>
-
-      </footer>
     </div>
   );
 }

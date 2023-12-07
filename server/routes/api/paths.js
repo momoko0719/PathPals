@@ -7,11 +7,14 @@ router.get("/", async function (req, res, next) {
   try {
     const username = req.query.username;
     const liked = req.query.liked;
+    const shared = req.query.shared;
     let paths = null;
     if (username) {
       paths = await models.Path.find({ username: username });
     } else if (liked) {
       paths = await models.Path.find({ likes: liked });
+    } else if (shared) {
+      paths = await models.Path.find({ shared: shared });
     } else {
       paths = await models.Path.find();
     }
@@ -63,6 +66,27 @@ router.post('/', async (req, res) => {
   }
 });
 
+// increment the number of views of a path
+router.post('/views', async (req, res) => {
+  try {
+    const { pathId } = req.body;
+    if (pathId) {
+      let path = await models.Path.findById(pathId);
+      if (path) {
+        path.num_views++;
+        await path.save();
+      } else {
+        res.status(400).json({ status: "error", error: 'no path matches given id' });
+      }
+    } else {
+      res.status(400).json({ status: "error", error: 'missing one or more required params' });
+    }
+    res.send({ status: 'success' })
+  } catch (error) {
+    res.status(500).json({ status: "error", error: error.message });
+  }
+});
+
 // update the likes of a path
 router.post('/likes', async (req, res) => {
   try {
@@ -100,6 +124,32 @@ router.post('/likes', async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({ status: "error", error: err.message });
+  }
+});
+
+// delete a path
+router.delete('/', async (req, res) => {
+  try {
+    if (req.session.isAuthenticated) {
+      let { pathId } = req.body;
+      let path = await models.Path.findById(pathId);
+      console.log(path);
+
+      let pathUsername = path.username;
+      let currentUsername = req.session.account.username;
+
+      if (pathUsername !== currentUsername) {
+        res.json({ status: 'error', error: "you can only delete your own posts" });
+      }
+
+      await models.Path.deleteOne({ _id: pathId });
+
+      res.json({ status: 'success' });
+    } else {
+      res.status(401).json({ error: 'not logged in' });
+    }
+  } catch (error) {
+    res.status(500).json({ status: "error", error: error.message });
   }
 });
 
