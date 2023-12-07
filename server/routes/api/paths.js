@@ -151,7 +151,7 @@ router.get("/comments/:pathId", async (req, res) => {
       if(docs.length > 0){
         res.json(docs[0].comments);
       }else{
-        res.json([{}]);
+        res.json([]);
       }
     } else{
       res.status(400).json({ status: "error", error: 'cannot find any path that matches the given id' });

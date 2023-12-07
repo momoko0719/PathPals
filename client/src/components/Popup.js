@@ -21,6 +21,7 @@ function Popup({ path, user, setLikes, fillForm }) {
     try{
       let res = await fetch(`/api/paths/comments/${path._id}`);
       res = await res.json();
+      console.log(res);
       setComments(res);
       updateNumComments(res.length);
     }catch(err){
