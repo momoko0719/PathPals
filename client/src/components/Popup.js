@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import PathDetails from "./PathDetails";
 
 function Popup({ path, user, setLikes, fillForm }) {
-  console.log(path, user);
   const [newLike, updateLike] = useState(path.num_likes);
   const [comments, setComments] = useState([]);
   const [numComments, updateNumComments] = useState(0);
@@ -93,19 +92,22 @@ function Popup({ path, user, setLikes, fillForm }) {
   }
 
   return (
-    <div className="container">
+    <div className="popup container">
       <div className="row">
-        <div className="col-md-6">
+        <div className="col-md-6 scrollable column">
           <PathDetails path={path} />
         </div>
-        <div className="col-md-6">
-          <div>
-            <p>{path.username}</p>
+        <div className="col-md-6 column">
+          <div className="top-section">
             <h1>{path.path_name}</h1>
-            <h2>{path.description}</h2>
-            <p>{path.formatted_date}</p>
-            <hr></hr>
-            <div id="comments">
+            <strong>{path.username}</strong>
+            <p>{path.description}</p>
+            <i>{path.formatted_date}</i>
+            <hr style={{ marginBottom: '0' }}></hr>
+          </div>
+          <div className="comment-section" id="comments">
+            <div className="scrollable">
+              {comments.length === 0 && <p className="my-1 mx-1">No comments yet!</p>}
               {comments.length > 0 &&
                 comments.map((comment) => {
                   return (
@@ -118,18 +120,18 @@ function Popup({ path, user, setLikes, fillForm }) {
                 })
               }
             </div>
-            <div>
-              <input className="form-control" id='comment' type="text"
-                onKeyDown={(e) => { if (e.key === "Enter") { addComment(path, user.username, e); } }} />
-              <span className="me-4"><i className={hasLiked ? "bi bi-hand-thumbs-up-fill" : "bi bi-hand-thumbs-up"} onClick={updateLikes}></i> {newLike}</span>
-              <span className="me-4"><i className="bi bi-chat"></i> {numComments}</span>
-              {(user && path.username === user.username) && <span className="me-4"><i className="bi bi-pencil-square" onClick={() => { editPath(path, fillForm, history) }}></i></span>}
-              {(user && path.username === user.username) && <span className="me-4"><i className="bi bi-trash" onClick={deletePath}></i></span>}
-            </div>
+          </div>
+          <div className="bottom-section">
+            <input className="form-control" id='comment' type="text"
+              onKeyDown={(e) => { if (e.key === "Enter") { addComment(path, user.username, e); } }} />
+            <span className="me-4"><i className={hasLiked ? "bi bi-hand-thumbs-up-fill" : "bi bi-hand-thumbs-up"} onClick={updateLikes}></i> {newLike}</span>
+            <span className="me-4"><i className="bi bi-chat"></i> {numComments}</span>
+            {(user && path.username === user.username) && <span className="me-4"><i className="bi bi-pencil-square" onClick={() => { editPath(path, fillForm, history) }}></i></span>}
+            {(user && path.username === user.username) && <span className="me-4"><i className="bi bi-trash" onClick={deletePath}></i></span>}
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 

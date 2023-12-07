@@ -63,7 +63,8 @@ export default function Discover({ searchTerm, userInfo, fillForm }) {
       marginRight: "-50%",
       transform: "translate(-50%, -50%)",
       width: "70%",
-      height: "80%",
+      height: "80vh",
+      overflow: "hidden",
     },
   };
 

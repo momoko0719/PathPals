@@ -76,7 +76,7 @@ function RenderCarousel({ photos }) {
             <img src={'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=' +
               photo['photo_reference'] + '&sensor=false&key=' +
               process.env.REACT_APP_GOOGLE_API_KEY}
-              className="d-block w-100 rounded-top" alt={`Slide ${index}`} />
+              className="d-block rounded-top fixed-size-image" alt={`Slide ${index}`} />
           </div>
         ))}
       </div>
