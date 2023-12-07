@@ -34,6 +34,10 @@ main {
   .col {
     margin-bottom: 1rem;
   }
+
+  .card {
+    height: 200px;
+  }
 }
 
 /* create page styles */
