@@ -64,4 +64,21 @@ router.get('/myUsername', (req, res) => {
   }
 });
 
+router.post('/updateBio', async (req, res) => {
+  try {
+    if (req.session.isAuthenticated) {
+      const { bio } = req.body;
+      const user = await models.User.findOne({ username: req.session.account.username });
+      user.bio = bio;
+      await user.save();
+      res.send({ status: 'success' });
+    } else {
+      res.status(401).json({ error: 'not logged in' });
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: "error", error: error.message });
+  }
+});
+
 module.exports = router;
