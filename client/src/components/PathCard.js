@@ -1,6 +1,13 @@
 import React from "react";
 
-export default function PathCard({ path, onPathClick }) {
+export default function PathCard({ path, onPathClick, user }) {
+  let username;
+  if(user){
+    username = user.username;
+  }else{
+    username = null;
+  }
+
   return (
     <div className="card">
       <img src="" className="card-img-top" alt="" />
@@ -13,7 +20,7 @@ export default function PathCard({ path, onPathClick }) {
           </button>
           <div>
             <span className="me-2 px-1">
-              <i className={"bi bi-hand-thumbs-up"}></i> {path.num_likes}
+              <i className={username ? (path.likes.includes(username) ? "bi bi-hand-thumbs-up-fill": "bi bi-hand-thumbs-up") : "bi bi-hand-thumbs-up"}></i> {path.num_likes}
             </span>
             <span>
               <i className="bi bi-eye"></i> {path.num_views}

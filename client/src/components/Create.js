@@ -108,13 +108,13 @@ export default function Create({ formInfo }) {
         </div>
         <div>
           <label className='form-label' htmlFor='path_name'>Path Name</label>
-          <input className="form-control" id='path_name' defaultValue={formInfo ? formInfo.path_name : path.path_name}
-            type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
+          <input className="form-control" id='path_name' defaultValue={formInfo ? formInfo.path_name : ""}
+                  type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
         </div>
         <div>
           <label className='form-label' htmlFor='description'>Description</label>
-          <input className="form-control" id='description' defaultValue={formInfo ? formInfo.description : path.description}
-            type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
+          <input className="form-control" id='description' defaultValue={formInfo ? formInfo.description : ""}
+                  type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
         </div>
         <div>
           <label className='form-label' htmlFor='places'>Places</label>
@@ -124,6 +124,8 @@ export default function Create({ formInfo }) {
       <div className='path-preview col-6 card'>
         {(path.path_name === '' && path.description === '' && path.places.length === 0) && <div>This is a preview to your path!</div>}
         <div className='card-content'>
+          <h1 className='my-1 mx-1'>{path.path_name}</h1>
+          <p className='my-1 mx-2'>{path.description}</p>
           <PathDetails path={path} onDelete={handleDelete} />
         </div>
       </div>

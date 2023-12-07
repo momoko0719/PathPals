@@ -5,7 +5,8 @@ import PathDetails from "./PathDetails";
 function Popup({ path, user, setLikes, fillForm }) {
   const [newLike, updateLike] = useState(path.num_likes);
   const [comments, setComments] = useState([]);
-  const [hasLiked, setHasLiked] = useState(false);
+  const [numComments, updateNumComments] = useState(0);
+  const [hasLiked, setHasLiked] = useState(path.likes.includes(user.username));
   const history = useNavigate()
 
   useEffect(() => {
@@ -21,6 +22,7 @@ function Popup({ path, user, setLikes, fillForm }) {
       let res = await fetch(`/api/paths/comments/${path._id}`);
       res = await res.json();
       setComments(res);
+      updateNumComments(res.length);
     }catch(err){
       console.log(err);
     }
@@ -37,9 +39,10 @@ function Popup({ path, user, setLikes, fillForm }) {
       });
       await statusCheck(response);
       let data = await response.json();
-      setLikes(path._id, data.like);
+      console.log(data);
+      setLikes(path._id, data.like, data.likes);
       updateLike(data.like);
-      setHasLiked(data.hasLiked);
+      setHasLiked(data.likes.includes(user.username));
     } catch (error) {
       console.error("Error updating likes:", error);
     }
@@ -76,8 +79,10 @@ function Popup({ path, user, setLikes, fillForm }) {
       let data = await response.json();
       if(comments.length === 0){
         setComments([data]);
+        updateNumComments(1);
       }else{
         setComments([...comments, data]);
+        updateNumComments(numComments + 1);
       }
       event.target.value = "";
     } catch (error) {
@@ -93,7 +98,7 @@ function Popup({ path, user, setLikes, fillForm }) {
         </div>
         <div className="col-md-6">
           <div>
-            <p onClick={() => showProfile(path.username)}>{path.username}</p>
+            <p>{path.username}</p>
             <h1>{path.path_name}</h1>
             <h2>{path.description}</h2>
             <p>{path.formatted_date}</p>
@@ -115,7 +120,7 @@ function Popup({ path, user, setLikes, fillForm }) {
               <input className="form-control" id='comment' type="text"
                      onKeyDown={(e) => {if(e.key === "Enter"){addComment(path, user.username, e);}}}/>
               <span className="me-4"><i className={hasLiked ? "bi bi-hand-thumbs-up-fill" : "bi bi-hand-thumbs-up"} onClick={updateLikes}></i> {newLike}</span>
-              <span className="me-4"><i className="bi bi-chat"></i> {0}</span>
+              <span className="me-4"><i className="bi bi-chat"></i> {numComments}</span>
               <i className="bi bi-pencil-square" onClick={() => {editPath(path, fillForm, history)}}></i>
             </div>
           </div>
@@ -143,16 +148,8 @@ function formatCommentDate(date){
   return splitDate[1] + "-" + splitDate[2];
 }
 
-async function showProfile(username) {
-  try {
-    // let res = await fetch('/api/profile/' + username);
-    // await statusCheck(res);
-    // let profile = await res.json();
-    // console.log(profile);
-    window.location.href = '/profile';
-  } catch (err) {
-    console.log(err);
-  }
+function showProfile() {
+  window.location.href = '/profile';
 }
 export default Popup;
 
