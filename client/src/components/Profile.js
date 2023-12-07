@@ -1,40 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import Modal from "react-modal";
 import Popup from "./Popup";
 import PathCard from './PathCard';
 
-export default function Profile({ identityInfo }) {
-  const [userInfo, setUserInfo] = useState();
-  useEffect(() => {
-    // This effect will run once when the component mounts, and anytime 'identityInfo' changes
-    if (identityInfo) {
-      // If 'identityInfo' is provided, use it to set the user info
-      setUserInfo(identityInfo.userInfo);
-    } else {
-      // If 'identityInfo' is not provided, retrieve it from sessionStorage
-      const storedIdentityInfo = sessionStorage.getItem('identityInfo');
-      if (storedIdentityInfo) {
-        setUserInfo(JSON.parse(storedIdentityInfo).userInfo);
-      }
-    }
-  }, [identityInfo]);
+export default function Profile() {
+  // Check if the user is logged in
+  const identityInfo = JSON.parse(sessionStorage.getItem('identityInfo'));
 
+  const [userInfo, setUserInfo] = useState();
   const [paths, setPaths] = useState([]);
-  const [currentTab, setCurrentTab] = useState('Mine'); // ['Mine', 'Liked']
+  const [currentTab, setCurrentTab] = useState('Mine'); // ['Mine', 'Liked', 'Shared With Me]
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedPath, setSelectedPath] = useState(null);
   const [bio, setBio] = useState('');
   const [editBio, setEditBio] = useState(false);
+  useEffect(() => {
+    if (identityInfo) {
+      fetch(`/api/users?user=${identityInfo.userInfo.username}`)
+        .then(res => res.json())
+        .then(data => {
+          setUserInfo(data);
+          console.log(data);
+        })
+        .catch(err => console.log(err));
+    }
+  }, []);
 
   useEffect(() => {
-    if (userInfo && userInfo.username) {
+    if (userInfo && userInfo.email) {
       let queryParam;
       if (currentTab === 'Mine') {
-        queryParam = `username=${userInfo.username}`;
+        queryParam = `username=${userInfo.email}`;
       } else if (currentTab === 'Liked') {
-        queryParam = `liked=${userInfo.username}`;
+        queryParam = `liked=${userInfo.email}`;
       } else {
-        queryParam = `shared=${userInfo.username}`;
+        queryParam = `shared=${userInfo.email}`;
       }
 
       // Fetch paths based on the current tab
@@ -102,9 +102,9 @@ export default function Profile({ identityInfo }) {
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">Name:</h5>
-              <p className="card-text">{userInfo.name}</p>
-              <h5 className="card-title">Email:</h5>
               <p className="card-text">{userInfo.username}</p>
+              <h5 className="card-title">Email:</h5>
+              <p className="card-text">{userInfo.email}</p>
             </div>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function Profile({ identityInfo }) {
                 </>
               ) : (
                 <>
-                  <p className="card-text">{bio}</p>
+                  <p className="card-text">{userInfo.bio}</p>
                   <button
                     className="btn btn-primary"
                     onClick={() => setEditBio(true)}

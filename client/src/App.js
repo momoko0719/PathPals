@@ -73,10 +73,10 @@ function App() {
             <div className='main-content col-10'>
               <Routes>
                 {/* default page */}
-                <Route index element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} fillForm={fillForm}/>} />
+                <Route index element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} fillForm={fillForm} />} />
                 <Route path='/' element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} fillForm={fillForm} />} />
                 <Route path='create' element={<Create formInfo={formInfo} />} />
-                <Route path='profile' element={<Profile userInfo={identityInfo} />} />
+                <Route path='profile' element={<Profile />} />
                 <Route path='about' element={<About />} />
               </Routes>
             </div>

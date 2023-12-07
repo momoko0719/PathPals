@@ -23,7 +23,8 @@ router.get('/myIdentity', (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const { user } = req.query;
-    const userInfo = await models.User.find({ username: user });
+    const userInfo = await models.User.findOne({ email: user });
+    console.log(userInfo);
     res.json(userInfo);
   } catch (error) {
     res.status(500).json({ status: "error", error: error });
