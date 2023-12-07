@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import PathDetails from "./PathDetails";
+import { ErrorHandling, statusCheck } from "../utils";
 
 function Popup({ path, user, setLikes, fillForm }) {
   const [newLike, updateLike] = useState(path.num_likes);
   const [comments, setComments] = useState([]);
   const [numComments, updateNumComments] = useState(0);
   const [hasLiked, setHasLiked] = useState(path.likes.includes(user.username));
+  const [havePermission, updatePermission] = useState(path.shared);
   const history = useNavigate()
 
   useEffect(() => {
@@ -20,12 +22,13 @@ function Popup({ path, user, setLikes, fillForm }) {
   const fetchComments = async() => {
     try{
       let res = await fetch(`/api/paths/comments/${path._id}`);
+      await statusCheck(res);
       res = await res.json();
-      console.log(res);
       setComments(res);
       updateNumComments(res.length);
     }catch(err){
       console.log(err);
+      ErrorHandling(err.message);
     }
   }
 
@@ -40,12 +43,12 @@ function Popup({ path, user, setLikes, fillForm }) {
       });
       await statusCheck(response);
       let data = await response.json();
-      console.log(data);
       setLikes(path._id, data.like, data.likes);
       updateLike(data.like);
       setHasLiked(data.likes.includes(user.username));
     } catch (error) {
       console.error("Error updating likes:", error);
+      ErrorHandling(error.message);
     }
   };
 
@@ -64,14 +67,15 @@ function Popup({ path, user, setLikes, fillForm }) {
       }
     } catch (error) {
       console.error("Error deleting path:", error);
+      ErrorHandling("Error deleting path: " + error.message);
     }
   };
 
-  const addComment = async (path, username, event) => {
+  const addComment = async (event) => {
     try {
       let response = await fetch(`/api/paths/comments/${path._id}`, {
         method: "POST",
-        body: JSON.stringify({username: username, comment: event.target.value}),
+        body: JSON.stringify({username: user.username, comment: event.target.value}),
         headers: {
           "Content-Type": "application/json"
         }
@@ -88,6 +92,25 @@ function Popup({ path, user, setLikes, fillForm }) {
       event.target.value = "";
     } catch (error) {
       console.error(error);
+      ErrorHandling(error.message);
+    }
+  }
+
+  const getAccess = async () => {
+    try {
+      let response = await fetch(`/api/paths/edit`, {
+        method: "POST",
+        body: JSON.stringify({pathId: path._id}),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      await statusCheck(response);
+      let data = await response.json();
+      updatePermission(data);
+    } catch (error) {
+      console.error(error);
+      ErrorHandling(error.message);
     }
   }
 
@@ -119,13 +142,16 @@ function Popup({ path, user, setLikes, fillForm }) {
             </div>
             <div>
               <input className="form-control" id='comment' type="text"
-                     onKeyDown={(e) => {if(e.key === "Enter"){addComment(path, user.username, e);}}}/>
+                     onKeyDown={(e) => {if(e.key === "Enter"){addComment(e);}}}/>
               <span className="me-4"><i className={hasLiked ? "bi bi-hand-thumbs-up-fill" : "bi bi-hand-thumbs-up"} onClick={updateLikes}></i> {newLike}</span>
               <span className="me-4"><i className="bi bi-chat"></i> {numComments}</span>
-              <i className="bi bi-pencil-square" onClick={() => {editPath(path, fillForm, history)}}></i>
+              {(user && user.username === path.username) && <i className="bi bi-pencil-square" onClick={() => {editPath(path, fillForm, history)}}></i>}
             </div>
           </div>
-          {(user && path.username === user.username) && <button className="btn btn-danger" onClick={deletePath}>Delete</button>}
+          {(user && (path.username === user.username || havePermission.includes(user.username)))
+            && <button className="btn btn-danger my-2" onClick={deletePath}>Delete</button>}
+          {(user && (user.username !== path.username && !havePermission.includes(user.username)))
+            && <button className="btn btn-info my-2" onClick={getAccess}>Request Access</button>}
         </div>
       </div>
     </div>
@@ -153,17 +179,3 @@ function showProfile() {
   window.location.href = '/profile';
 }
 export default Popup;
-
-/**
-   * Helper function to return the response's result text if successful, otherwise
-   * returns the rejected Promise result with an error status and corresponding text
-   * @param {object} res - response to check for success/error
-   * @return {object} - valid response if response was successful, otherwise rejected
-   *                    Promise result
-   */
-async function statusCheck(res) {
-  if (!res.ok) {
-    throw new Error(await res.text());
-  }
-  return res;
-}

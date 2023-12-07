@@ -2,6 +2,7 @@ import React, { useEffect, useId, useState } from 'react';
 import Modal from "react-modal";
 import Popup from "./Popup";
 import PathCard from './PathCard';
+import { ErrorHandling } from "../utils";
 
 export default function Profile() {
   const identityInfo = JSON.parse(sessionStorage.getItem('identityInfo'));
@@ -48,6 +49,7 @@ export default function Profile() {
         })
         .catch(err => {
           console.error('Error fetching paths:', err);
+          ErrorHandling(err.message);
         });
     }
   }, [currentTab, userInfo]); // Include userInfo in the dependency array

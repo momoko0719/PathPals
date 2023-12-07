@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ErrorHandling, statusCheck } from "../utils";
 
 export default function PathDetails({ path, onDelete }) {
   const [placesDetails, setPlacesDetails] = useState([]);
@@ -15,11 +16,13 @@ export default function PathDetails({ path, onDelete }) {
   const fetchPlaceDetails = async (placeId) => {
     try {
       let res = await fetch(`/api/places?placeid=${placeId}`);
+      await statusCheck(res);
       let details = await res.json();
       console.log(details);
       return details;
     } catch (err) {
       console.log(err);
+      ErrorHandling(err.message);
       return null;
     }
   }

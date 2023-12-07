@@ -218,6 +218,32 @@ router.delete('/', async (req, res) => {
   }
 });
 
+// grant permission to edit path
+router.post("/edit", async (req, res) => {
+  try {
+    if (req.session.isAuthenticated) {
+      let { pathId } = req.body;
+      if(pathId){
+        let path = await models.Path.findById(pathId);
+
+        if(path){
+          path.shared.push(req.session.account?.username);
+          let haveAccess = await path.save();
+          res.json(haveAccess.shared);
+        } else{
+          res.status(401).json({ error: 'cannot find any path with the given id' });
+        }
+      } else {
+        res.status(400).json({ error: 'missing required parameter' });
+      }
+    } else {
+      res.status(401).json({ error: 'not logged in' });
+    }
+  }catch(error){
+    res.status(500).json({ status: "error", error: error.message });
+  }
+})
+
 module.exports = router;
 
 function formatDate(date) {
