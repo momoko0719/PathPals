@@ -9,6 +9,7 @@ import About from './components/About';
 const SERVER_URL = 'http://localhost:3001';
 
 function App() {
+  console.log('why');
   const [identityInfo, setIdentityInfo] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [formInfo, fillForm] = useState(null);
