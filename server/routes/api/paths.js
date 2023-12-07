@@ -1,6 +1,7 @@
 var express = require("express");
 var models = require("../../models");
 var router = express.Router();
+var mongoose = require('mongoose');
 
 // get all paths
 router.get("/", async function (req, res, next) {
@@ -94,17 +95,32 @@ router.post('/likes', async (req, res) => {
 });
 
 // get all comments for each path
-router.get("/comments", async (req, res) => {
+router.get("/comments/:pathId", async (req, res) => {
   try{
-    let docs = await models.Comment.aggregate([
-      {
-        $group: {
-          _id: "$path",
-          comments: {$push: {username: "$username", comment: "$comment"}}
+    let id = req.params.pathId;
+    let existingId = await models.Path.findById(id);
+
+    if(existingId){
+      let docs = await models.Comment.aggregate([
+        {
+          $match: { path: new mongoose.Types.ObjectId(id) }
+        },
+        {
+          $group: {
+            _id: "$path",
+            comments: {$push: {id: "$_id", username: "$username", comment: "$comment", date_created: "$date_created"}}
+          }
         }
+      ]);
+
+      if(docs.length > 0){
+        res.json(docs[0].comments);
+      }else{
+        res.json([{}]);
       }
-    ]);
-    res.json(docs);
+    } else{
+      res.status(400).json({ status: "error", error: 'cannot find any path that matches the given id' });
+    }
   }catch(err){
     res.status(500).json({ status: "error", error: err.message });
   }
@@ -113,24 +129,28 @@ router.get("/comments", async (req, res) => {
 // add new comments
 router.post("/comments/:pathId", async (req, res) => {
   try{
-    let id = req.params.pathId;
+    if(req.session.isAuthenticated){
+      let id = req.params.pathId;
 
-    let existingId = await models.Path.findById(id);
-    if(existingId){
-      let { username, comment } = req.body;
-      if(username && comment){
-        let newComment = new models.Comment({
-          username: username,
-          comment: comment,
-          path: id
-        });
-        let returnedCmt = await newComment.save();
-        res.json(returnedCmt);
-      }else{
-        res.status(400).json({ status: "error", error: 'missing one or more required params' });
+      let existingId = await models.Path.findById(id);
+      if(existingId){
+        let { username, comment } = req.body;
+        if(username && comment){
+          let newComment = new models.Comment({
+            username: username,
+            comment: comment,
+            path: id
+          });
+          let returnedCmt = await newComment.save();
+          res.json(returnedCmt);
+        }else{
+          res.status(400).json({ status: "error", error: 'missing one or more required params' });
+        }
+      } else{
+        res.status(400).json({ status: "error", error: 'cannot find any path that matches the given id' });
       }
     } else{
-      res.status(400).json({ status: "error", error: 'cannot find any path that matches the given id' });
+      res.status(401).json({ error: 'not logged in' });
     }
   }catch(err){
     res.status(500).json({ status: "error", error: err.message });
