@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
           key: process.env.REACT_APP_GOOGLE_API_KEY
         }
 
-        let response = await client.placeDetails({ params: params });
+        const response = await client.placeDetails({ params: params });
         // save the place to mongodb with the placeId as the key
         await addNewPlace(response.data.result, req.query.placeid);
         res.json(response.data.result);

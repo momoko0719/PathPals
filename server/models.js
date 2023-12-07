@@ -36,7 +36,8 @@ async function main() {
 
   const UserSchema = new mongoose.Schema ({
     username: String,
-    email: String
+    email: String,
+    bio: String
   })
 
   models.Path = mongoose.model('Path', PathSchema);
