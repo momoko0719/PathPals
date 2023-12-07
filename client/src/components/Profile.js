@@ -1,10 +1,9 @@
-import React, { useEffect, useId, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from "react-modal";
 import Popup from "./Popup";
 import PathCard from './PathCard';
-import { ErrorHandling } from "../utils";
 
-export default function Profile() {
+export default function Profile({ fillForm }) {
   const identityInfo = JSON.parse(sessionStorage.getItem('identityInfo'));
   const [userInfo, setUserInfo] = useState();
   const [paths, setPaths] = useState([]);
@@ -13,18 +12,20 @@ export default function Profile() {
   const [selectedPath, setSelectedPath] = useState(null);
   const [bio, setBio] = useState('');
   const [editBio, setEditBio] = useState(false);
+
+  // Fetch user info
   useEffect(() => {
     if (identityInfo) {
       fetch(`/api/users?user=${identityInfo.userInfo.username}`)
         .then(res => res.json())
         .then(data => {
           setUserInfo(data);
-          console.log(data);
         })
         .catch(err => console.log(err));
     }
   }, []);
 
+  // Fetch paths
   useEffect(() => {
     if (userInfo && userInfo.email) {
       let queryParam;
@@ -49,7 +50,6 @@ export default function Profile() {
         })
         .catch(err => {
           console.error('Error fetching paths:', err);
-          ErrorHandling(err.message);
         });
     }
   }, [currentTab, userInfo]); // Include userInfo in the dependency array
@@ -164,7 +164,7 @@ export default function Profile() {
         style={customStyles}
         contentLabel="Path Details"
       >
-        {selectedPath && <Popup path={selectedPath} user={userInfo} />}
+        {selectedPath && <Popup path={selectedPath} user={identityInfo.userInfo} fillForm={fillForm} />}
         <button
           onClick={() => setModalIsOpen(false)}
           className="btn-close"

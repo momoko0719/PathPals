@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 import usePlacesAutocomplete from "use-places-autocomplete";
-import { ErrorHandling, statusCheck } from "../utils";
 
 import PathDetails from './PathDetails';
 
@@ -20,7 +19,8 @@ export default function Create({ formInfo }) {
   });
 
   useEffect(() => {
-    if(formInfo){
+    if (formInfo) {
+      console.log(formInfo);
       setPath({
         path_name: formInfo.path_name,
         description: formInfo.description,
@@ -79,11 +79,11 @@ export default function Create({ formInfo }) {
       });
       await statusCheck(res);
       let details = await res.json();
+      console.log(details);
       // navigate to the discover page
       window.location.href = '/';
     } catch (err) {
       console.log(err);
-      ErrorHandling(err.message);
     }
   }
 
@@ -108,13 +108,13 @@ export default function Create({ formInfo }) {
         </div>
         <div>
           <label className='form-label' htmlFor='path_name'>Path Name</label>
-          <input className="form-control" id='path_name' defaultValue={formInfo ? formInfo.path_name : ""}
-                  type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
+          <input className="form-control mb-4" id='path_name' defaultValue={formInfo ? formInfo.path_name : ""}
+            type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
         </div>
         <div>
           <label className='form-label' htmlFor='description'>Description</label>
-          <input className="form-control" id='description' defaultValue={formInfo ? formInfo.description : ""}
-                  type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
+          <textarea className="form-control mb-4" id='description' defaultValue={formInfo ? formInfo.description : ""}
+            type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
         </div>
         <div>
           <label className='form-label' htmlFor='places'>Places</label>
@@ -186,5 +186,12 @@ function PlacesAutocomplete({ onPlaceSelect }) {
       {status === "OK" && <div className='suggestions'>{renderSuggestions()}</div>}
     </div>
   );
+}
+
+async function statusCheck(res) {
+  if (!res.ok) {
+    throw new Error(await res.text());
+  }
+  return res;
 }
 
