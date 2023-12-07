@@ -73,6 +73,10 @@ main {
 /* profile page styles */
 .profile {
 
+  .row {
+    margin-bottom: 1rem;
+  }
+
   .nav-tabs {
     margin-bottom: 1rem;
   }

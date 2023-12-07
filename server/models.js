@@ -34,10 +34,10 @@ async function main() {
     photos: [Object] // an array of photo objects
   });
 
-  const UserSchema = new mongoose.Schema ({
+  const UserSchema = new mongoose.Schema({
     username: String,
     email: String,
-    bio: String
+    bio: { type: String, default: 'This person does not have a bio yet...' },
   })
 
   models.Path = mongoose.model('Path', PathSchema);
