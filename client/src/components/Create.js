@@ -36,6 +36,24 @@ export default function Create({ formInfo }) {
     places: [] // an array of place ids
   });
 
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  useEffect(() => {
+    const checkIsCompleted = () => {
+      console.log('is monitoring');
+      console.log(path);
+      if (path.path_name !== '' && path.description !== '' && path.places.length !== 0) {
+        console.log('is completed');
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    // Update isCompleted based on the current path state
+    setIsCompleted(checkIsCompleted());
+  }, [path]);
+
   // updates path object on user inputs
   const updatePathName = (e) => {
     let newName = e.target.value;
@@ -58,6 +76,7 @@ export default function Create({ formInfo }) {
       ...prevState,
       places: [...prevState.places, id]
     }));
+    console.log(path);
   }
 
   const handleDelete = (placeId) => {
@@ -85,7 +104,7 @@ export default function Create({ formInfo }) {
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   // message when there is an error
   if (loadError) {
@@ -103,23 +122,25 @@ export default function Create({ formInfo }) {
         <div className='row'>
           <div className='col-10'><h2>Create Your Path</h2></div>
           <div className='col-2'>
-            <button className='btn btn-success' onClick={handleClickDone}>Done</button>
+            <button className={`btn btn-success ${!isCompleted ? 'disabled' : ''}`} onClick={handleClickDone}>Done</button>
           </div>
         </div>
-        <div>
-          <label className='form-label' htmlFor='path_name'>Path Name</label>
-          <input className="form-control mb-4" id='path_name' defaultValue={formInfo ? formInfo.path_name : ""}
-            type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
-        </div>
-        <div>
-          <label className='form-label' htmlFor='description'>Description</label>
-          <textarea className="form-control mb-4" id='description' defaultValue={formInfo ? formInfo.description : ""}
-            type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
-        </div>
-        <div>
-          <label className='form-label' htmlFor='places'>Places</label>
-          <PlacesAutocomplete onPlaceSelect={handlePlaceSelect} />
-        </div>
+        <form>
+          <div>
+            <label className='form-label' htmlFor='path_name'>Path Name</label>
+            <input className="form-control mb-4" id='path_name' defaultValue={formInfo ? formInfo.path_name : ""}
+              type="text" placeholder="Enter Path Name" onBlur={updatePathName} required />
+          </div>
+          <div>
+            <label className='form-label' htmlFor='description'>Description</label>
+            <textarea className="form-control mb-4" id='description' defaultValue={formInfo ? formInfo.description : ""}
+              type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} required />
+          </div>
+          <div>
+            <label className='form-label' htmlFor='places'>Places</label>
+            <PlacesAutocomplete onPlaceSelect={handlePlaceSelect} />
+          </div>
+        </form>
       </div>
       <div className='path-preview col-6 card'>
         {(path.path_name === '' && path.description === '' && path.places.length === 0) && <div>This is a preview to your path!</div>}
@@ -182,6 +203,7 @@ function PlacesAutocomplete({ onPlaceSelect }) {
         disabled={!ready}
         placeholder="Search for places"
         autoComplete='off'
+        required
       />
       {status === "OK" && <div className='suggestions'>{renderSuggestions()}</div>}
     </div>
