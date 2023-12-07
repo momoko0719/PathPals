@@ -24,7 +24,6 @@ router.get('/', async (req, res) => {
   try {
     const { user } = req.query;
     const userInfo = await models.User.findOne({ email: user });
-    console.log(userInfo);
     res.json(userInfo);
   } catch (error) {
     res.status(500).json({ status: "error", error: error });
@@ -36,7 +35,6 @@ router.post('/', async (req, res) => {
   try {
     if (req.session.isAuthenticated) {
       const { name, username } = req.body;
-      console.log(name, username);
       let exist = await models.User.findOne({ email: username });
 
       if (!exist) {
@@ -48,7 +46,6 @@ router.post('/', async (req, res) => {
       res.status(401).json({ error: 'not logged in' });
     }
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ status: "error", error: error.message });
   }
 });
@@ -66,7 +63,6 @@ router.post('/updateBio', async (req, res) => {
       res.status(401).json({ error: 'not logged in' });
     }
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ status: "error", error: error.message });
   }
 });

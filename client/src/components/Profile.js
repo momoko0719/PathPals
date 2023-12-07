@@ -4,9 +4,7 @@ import Popup from "./Popup";
 import PathCard from './PathCard';
 
 export default function Profile() {
-  // Check if the user is logged in
   const identityInfo = JSON.parse(sessionStorage.getItem('identityInfo'));
-
   const [userInfo, setUserInfo] = useState();
   const [paths, setPaths] = useState([]);
   const [currentTab, setCurrentTab] = useState('Mine'); // ['Mine', 'Liked', 'Shared With Me]

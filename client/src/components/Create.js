@@ -7,6 +7,11 @@ import PathDetails from './PathDetails';
 const libraries = ['places'];
 
 export default function Create({ formInfo }) {
+  // Check if the user is logged in
+  const identityInfo = JSON.parse(sessionStorage.getItem('identityInfo'));
+  if (identityInfo.status !== 'loggedin') {
+    window.location.href = 'http://localhost:3000/auth/signin';
+  }
   // loads Google places autocomplete
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
@@ -14,7 +19,7 @@ export default function Create({ formInfo }) {
   });
 
   useEffect(() => {
-    if(formInfo){
+    if (formInfo) {
       console.log(formInfo);
       setPath({
         path_name: formInfo.path_name,
@@ -76,7 +81,7 @@ export default function Create({ formInfo }) {
       let details = await res.json();
       console.log(details);
       // navigate to the discover page
-      window.location.href = '/discover';
+      window.location.href = '/';
     } catch (err) {
       console.log(err);
     }
