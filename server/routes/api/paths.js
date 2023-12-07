@@ -32,6 +32,7 @@ router.get("/", async function (req, res, next) {
             formatted_date: formatDate(path.date_created),
             num_views: path.num_views,
             num_likes: path.num_likes,
+            likes: path.likes,
             shared: path.shared,
           };
         } catch (error) {
@@ -98,7 +99,6 @@ router.post('/likes', async (req, res) => {
         if (path) {
           let users = path.likes
           let like = path.num_likes;
-          let hasLiked = true;
 
           // if the user already liked that path, unlike it
           if (users.includes(username)) {
@@ -106,7 +106,6 @@ router.post('/likes', async (req, res) => {
               return user !== username;
             });
             like--;
-            hasLiked = false;
           } else { // otherwise, likes the path
             users.push(username);
             like++;
@@ -115,7 +114,7 @@ router.post('/likes', async (req, res) => {
             num_likes: like,
             likes: users
           }, { new: true });
-          res.json({like: updateLike.num_likes, hasLiked: hasLiked});
+          res.json({like: updateLike.num_likes, likes: users});
         }else{
           res.status(400).json({ status: "error", error: 'no path matches given id' });
         }

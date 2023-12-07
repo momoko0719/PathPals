@@ -5,7 +5,7 @@ import PathDetails from "./PathDetails";
 function Popup({ path, user, setLikes, fillForm }) {
   const [newLike, updateLike] = useState(path.num_likes);
   const [comments, setComments] = useState([]);
-  const [hasLiked, setHasLiked] = useState(false);
+  const [hasLiked, setHasLiked] = useState(path.likes.includes(user.username));
   const history = useNavigate()
 
   useEffect(() => {
@@ -37,9 +37,10 @@ function Popup({ path, user, setLikes, fillForm }) {
       });
       await statusCheck(response);
       let data = await response.json();
-      setLikes(path._id, data.like);
+      console.log(data);
+      setLikes(path._id, data.like, data.likes);
       updateLike(data.like);
-      setHasLiked(data.hasLiked);
+      setHasLiked(data.likes.includes(user.username));
     } catch (error) {
       console.error("Error updating likes:", error);
     }
@@ -93,7 +94,7 @@ function Popup({ path, user, setLikes, fillForm }) {
         </div>
         <div className="col-md-6">
           <div>
-            <p onClick={() => showProfile(path.username)}>{path.username}</p>
+            <p>{path.username}</p>
             <h1>{path.path_name}</h1>
             <h2>{path.description}</h2>
             <p>{path.formatted_date}</p>
@@ -143,16 +144,8 @@ function formatCommentDate(date){
   return splitDate[1] + "-" + splitDate[2];
 }
 
-async function showProfile(username) {
-  try {
-    // let res = await fetch('/api/profile/' + username);
-    // await statusCheck(res);
-    // let profile = await res.json();
-    // console.log(profile);
-    window.location.href = '/profile';
-  } catch (err) {
-    console.log(err);
-  }
+function showProfile() {
+  window.location.href = '/profile';
 }
 export default Popup;
 
