@@ -11,7 +11,7 @@ const SERVER_URL = 'http://localhost:3001';
 function App() {
   const [identityInfo, setIdentityInfo] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
-  const [path, fillForm] = useState({});
+  const [formInfo, fillForm] = useState(null);
 
   // get the current user info from the server
   useEffect(() => {
@@ -75,7 +75,7 @@ function App() {
                 {/* default page */}
                 <Route index element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} fillForm={fillForm}/>} />
                 <Route path='/' element={<Discover searchTerm={searchTerm} userInfo={identityInfo.userInfo} fillForm={fillForm} />} />
-                <Route path='create' element={<Create editPath={path} />} />
+                <Route path='create' element={<Create formInfo={formInfo} />} />
                 <Route path='profile' element={<Profile userInfo={identityInfo} />} />
                 <Route path='about' element={<About />} />
               </Routes>
