@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from "react-modal";
 import Popup from "./Popup";
 import PathCard from './PathCard';
+import { ErrorHandling } from "../utils";
 
 export default function Profile({ identityInfo }) {
   const [userInfo, setUserInfo] = useState();
@@ -51,6 +52,7 @@ export default function Profile({ identityInfo }) {
         })
         .catch(err => {
           console.error('Error fetching paths:', err);
+          ErrorHandling(err.message);
         });
     }
   }, [currentTab, userInfo]); // Include userInfo in the dependency array
@@ -80,7 +82,10 @@ export default function Profile({ identityInfo }) {
         console.error('Error saving bio:', data.error);
       }
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      console.log(err);
+      ErrorHandling(err.message);
+    });
   };
 
   const customStyles = {

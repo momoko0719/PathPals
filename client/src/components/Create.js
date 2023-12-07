@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 import usePlacesAutocomplete from "use-places-autocomplete";
+import { ErrorHandling, statusCheck } from "../utils";
 
 import PathDetails from './PathDetails';
 
@@ -15,7 +16,6 @@ export default function Create({ formInfo }) {
 
   useEffect(() => {
     if(formInfo){
-      console.log(formInfo);
       setPath({
         path_name: formInfo.path_name,
         description: formInfo.description,
@@ -74,11 +74,11 @@ export default function Create({ formInfo }) {
       });
       await statusCheck(res);
       let details = await res.json();
-      console.log(details);
       // navigate to the discover page
       window.location.href = '/discover';
     } catch (err) {
       console.log(err);
+      ErrorHandling(err.message);
     }
   }
 
@@ -181,12 +181,5 @@ function PlacesAutocomplete({ onPlaceSelect }) {
       {status === "OK" && <div className='suggestions'>{renderSuggestions()}</div>}
     </div>
   );
-}
-
-async function statusCheck(res) {
-  if (!res.ok) {
-    throw new Error(await res.text());
-  }
-  return res;
 }
 
