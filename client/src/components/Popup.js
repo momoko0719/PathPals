@@ -8,7 +8,7 @@ function Popup({ path, user, setLikes }) {
     try {
       let response = await fetch("/api/paths/likes", {
         method: "POST",
-        body: JSON.stringify({id: path._id, username: user.username}),
+        body: JSON.stringify({ id: path._id, username: user.username }),
         headers: {
           "Content-Type": "application/json"
         }
@@ -19,7 +19,25 @@ function Popup({ path, user, setLikes }) {
     } catch (error) {
       console.error("Error updating likes:", error);
     }
-  }
+  };
+
+  const deletePath = async () => {
+    try {
+      let response = await fetch("/api/paths", {
+        method: "DELETE",
+        body: JSON.stringify({ pathId: path._id }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (response.ok) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error deleting path:", error);
+    }
+  };
 
   return (
     <div className="container">
@@ -35,6 +53,7 @@ function Popup({ path, user, setLikes }) {
               <i className="far fa-thumbs-up"></i> {newLike}
             </button>
           </div>
+          {(user && path.username === user.username) && <button className="btn btn-danger" onClick={deletePath}>Delete</button>}
         </div>
       </div>
     </div>

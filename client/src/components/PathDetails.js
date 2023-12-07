@@ -24,7 +24,7 @@ export default function PathDetails({ path, onDelete }) {
   }
 
   return (
-    <div className="path-container">
+    <div className="path container card-content">
       <h1>{path.path_name}</h1>
       <p>{path.description}</p>
       <div className='card-container'>

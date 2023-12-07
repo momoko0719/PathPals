@@ -3,11 +3,21 @@ import Modal from "react-modal";
 import Popup from "./Popup";
 import PathCard from './PathCard';
 
-export default function Profile({ userInfo }) {
-  // make sure the user is logged in
-  if (!userInfo) {
-    window.location.href = '/';
-  }
+export default function Profile({ identityInfo }) {
+  const [userInfo, setUserInfo] = useState();
+  useEffect(() => {
+    // This effect will run once when the component mounts, and anytime 'identityInfo' changes
+    if (identityInfo) {
+      // If 'identityInfo' is provided, use it to set the user info
+      setUserInfo(identityInfo.userInfo);
+    } else {
+      // If 'identityInfo' is not provided, retrieve it from sessionStorage
+      const storedIdentityInfo = sessionStorage.getItem('identityInfo');
+      if (storedIdentityInfo) {
+        setUserInfo(JSON.parse(storedIdentityInfo).userInfo);
+      }
+    }
+  }, [identityInfo]);
 
   const [paths, setPaths] = useState([]);
   const [currentTab, setCurrentTab] = useState('Mine'); // ['Mine', 'Liked']
@@ -16,22 +26,34 @@ export default function Profile({ userInfo }) {
   const [bio, setBio] = useState(userInfo?.bio || '');
 
   useEffect(() => {
-    if (currentTab === 'Mine') {
-      fetch(`/api/paths?username=${userInfo.username}`)
-        .then(res => res.json())
+    if (userInfo && userInfo.username) {
+      // const queryParam = currentTab === 'Mine' ? `username=${userInfo.username}` : `liked=${userInfo.username}`;
+      let queryParam;
+      if (currentTab === 'Mine') {
+        queryParam = `username=${userInfo.username}`;
+      } else if (currentTab === 'Liked') {
+        queryParam = `liked=${userInfo.username}`;
+      } else {
+        queryParam = `shared=${userInfo.username}`;
+      }
+
+      // Fetch paths based on the current tab
+      fetch(`/api/paths?${queryParam}`)
+        .then(res => {
+          if (!res.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return res.json();
+        })
         .then(data => {
           setPaths(data);
         })
-        .catch(err => console.log(err));
-    } else if (currentTab === 'Liked') {
-      fetch(`/api/paths?liked=${userInfo.username}`)
-        .then(res => res.json())
-        .then(data => {
-          setPaths(data);
-        })
-        .catch(err => console.log(err));
+        .catch(err => {
+          console.error('Error fetching paths:', err);
+        });
     }
-  }, [currentTab]);
+  }, [currentTab, userInfo]); // Include userInfo in the dependency array
+
 
   const openModal = (path) => {
     setSelectedPath(path);
@@ -60,7 +82,7 @@ export default function Profile({ userInfo }) {
   };
 
   return userInfo ? (
-    <div className="container mt-4">
+    <div className="profile container">
       <h2>User Profile</h2>
       <div className="row">
         <div className="col-md-6">
@@ -90,11 +112,19 @@ export default function Profile({ userInfo }) {
           </div>
         </div>
       </div>
-      <div className="mt-4">
-        <button className="btn btn-primary me-2" onClick={() => setCurrentTab('Mine')}>Mine</button>
-        <button className="btn btn-primary" onClick={() => setCurrentTab('Liked')}>Liked</button>
-      </div>
+      <ul className="nav nav-tabs">
+        <li className="nav-item" onClick={() => setCurrentTab('Mine')}>
+          <button className={`nav-link ${currentTab === 'Mine' ? 'active' : ''}`}>Mine</button>
+        </li>
+        <li className="nav-item" onClick={() => setCurrentTab('Liked')}>
+          <button className={`nav-link ${currentTab === 'Liked' ? 'active' : ''}`}>Liked</button>
+        </li>
+        <li className="nav-item" onClick={() => setCurrentTab('Shared')}>
+          <button className={`nav-link ${currentTab === 'Shared' ? 'active' : ''}`}>Shared with me</button>
+        </li>
+      </ul>
       <div className="content-cards row row-cols-3">
+        {paths.length === 0 && <p>No paths to show</p>}
         {paths.map((path, index) => (
           <div className="col" key={index}>
             <PathCard path={path} onPathClick={openModal} />
@@ -107,7 +137,7 @@ export default function Profile({ userInfo }) {
         style={customStyles}
         contentLabel="Path Details"
       >
-        {selectedPath && <Popup path={selectedPath} />}
+        {selectedPath && <Popup path={selectedPath} user={userInfo} />}
         <button
           onClick={() => setModalIsOpen(false)}
           className="btn-close"

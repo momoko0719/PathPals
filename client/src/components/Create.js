@@ -82,27 +82,34 @@ export default function Create() {
   }
 
   return (
-    <div className='create-container row'>
+    <div className='create container row'>
       <div className='path-editor col-6'>
+        <div className='row'>
+          <div className='col-10'><h2>Create Your Path</h2></div>
+          <div className='col-2'>
+            <button className='btn btn-success' onClick={handleClickDone}>Done</button>
+          </div>
+        </div>
         <div>
           <label className='form-label' htmlFor='path_name'>Path Name</label>
           <input className="form-control" id='path_name' type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
         </div>
         <div>
           <label className='form-label' htmlFor='description'>Description</label>
-          <input className="form-control" id='description' type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
+          <textarea className="form-control" id='description' type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
         </div>
         <div>
           <label className='form-label' htmlFor='places'>Places</label>
           <PlacesAutocomplete onPlaceSelect={handlePlaceSelect} />
         </div>
-        <button className='btn btn-success' onClick={handleClickDone}>Done</button>
       </div>
-      <div className='path-preview col-6'>
-        This is a preview to your path!
-        <PathDetails path={path} onDelete={handleDelete} />
+      <div className='path-preview col-6 card'>
+        {(path.path_name === '' && path.description === '' && path.places.length === 0) && <div>This is a preview to your path!</div>}
+        <div className='card-content'>
+          <PathDetails path={path} onDelete={handleDelete} />
+        </div>
       </div>
-    </div>
+    </div >
   );
 }
 
