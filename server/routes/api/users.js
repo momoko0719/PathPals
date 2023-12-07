@@ -52,16 +52,6 @@ router.post('/', async (req, res) => {
     console.log(error.message);
     res.status(500).json({ status: "error", error: error.message });
   }
-})
-
-router.get('/myUsername', (req, res) => {
-  if (req.session.account && req.session.account.username) {
-    const username = req.session.account.username;
-    console.log('Username grabbed:', username);
-    res.json({ username });
-  } else {
-    res.status(401).json({ error: 'not logged in' });
-  }
 });
 
 router.post('/updateBio', async (req, res) => {
@@ -80,5 +70,4 @@ router.post('/updateBio', async (req, res) => {
     res.status(500).json({ status: "error", error: error.message });
   }
 });
-
 module.exports = router;

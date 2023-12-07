@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import Popup from "./Popup";
 import PathCard from "./PathCard";
@@ -16,7 +16,6 @@ export default function Discover({ searchTerm, userInfo }) {
       console.error('No _id property on path object:', path);
       return;
     }
-    console.log(path);
 
     incrementPathViews(path._id);
     setSelectedPath(path);
@@ -36,8 +35,12 @@ export default function Discover({ searchTerm, userInfo }) {
     setFilteredPaths(updatedFilteredPaths);
 
     try {
-      await fetch(`/api/paths/increment-view/${pathId}`, {
-        method: 'POST'
+      await fetch('/api/paths/views', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pathId: pathId })
       });
     } catch (error) {
       console.error('Error updating view count:', error);
@@ -165,7 +168,7 @@ export default function Discover({ searchTerm, userInfo }) {
   };
 
   return (
-    <div className="content-container">
+    <div className="content container">
       <div className="content-controllers">
         <Controllers
           handleSortingCriteriaChange={handleSortingCriteriaChange}

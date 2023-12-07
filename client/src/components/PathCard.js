@@ -35,6 +35,6 @@ export default function PathCard({ path, onPathClick }) {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

@@ -3,8 +3,8 @@ import React from "react";
 export default function Detail() {
   return (
     <div>
-      <div class="card p-3">
-        <div class="card-body">
+      <div className="card p-3">
+        <div className="card-body">
           <h3>Our Mission</h3>
           <h5 className="text-primary pt-3">
             Empowering Student Adventures: Simplify. Explore. Connect.
@@ -33,15 +33,15 @@ export default function Detail() {
         </div>
       </div>
 
-      <div class="card mt-3 p-3">
-        <div class="card-body">
+      <div className="card mt-3 p-3">
+        <div className="card-body">
           <h3>Meet Our Team</h3>
 
           <p className="mt-3">INFO 441 autumn 2023 Group 12</p>
-          <div class="d-inline bg-white text-dark">Allison Ho</div>
-          <div class="d-inline p-3 bg-white text-dark">Sam You</div>
-          <div class="d-inline p-3 bg-white text-dark">Ella Tao</div>
-          <div class="d-inline p-3 bg-white text-dark">Leul Demelie</div>
+          <div className="d-inline bg-white text-dark">Allison Ho</div>
+          <div className="d-inline p-3 bg-white text-dark">Sam You</div>
+          <div className="d-inline p-3 bg-white text-dark">Ella Tao</div>
+          <div className="d-inline p-3 bg-white text-dark">Leul Demelie</div>
         </div>
       </div>
     </div>
