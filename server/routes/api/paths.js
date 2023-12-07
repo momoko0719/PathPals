@@ -31,7 +31,7 @@ router.get("/", async function (req, res, next) {
             date_created: path.date_created,
             formatted_date: formatDate(path.date_created),
             num_views: path.num_views,
-            likes: path.likes, // an array of usernames that liked this path
+            num_likes: path.num_likes,
             shared: path.shared,
           };
         } catch (error) {
@@ -98,7 +98,7 @@ router.post('/likes', async (req, res) => {
         if (path) {
           let users = path.likes
           let like = path.num_likes;
-          let hasLiked = false;
+          let hasLiked = true;
 
           // if the user already liked that path, unlike it
           if (users.includes(username)) {
@@ -106,7 +106,7 @@ router.post('/likes', async (req, res) => {
               return user !== username;
             });
             like--;
-            hasLiked = true;
+            hasLiked = false;
           } else { // otherwise, likes the path
             users.push(username);
             like++;
@@ -190,7 +190,9 @@ router.post("/comments/:pathId", async (req, res) => {
     }
   }catch(err){
     res.status(500).json({ status: "error", error: err.message });
-    
+  }
+});
+
 // delete a path
 router.delete('/', async (req, res) => {
   try {

@@ -188,7 +188,9 @@ export default function Discover({ searchTerm, userInfo, fillForm }) {
         style={customStyles}
         contentLabel="Path Details"
       >
-        {selectedPath && <Popup path={selectedPath} user={userInfo} setLikes={changeLikes} fillForm={fillForm} />}
+        {selectedPath &&
+        <Popup path={selectedPath} user={userInfo} setLikes={changeLikes} fillForm={fillForm} />}
+
         <button
           onClick={() => setModalIsOpen(false)}
           className="btn-close"

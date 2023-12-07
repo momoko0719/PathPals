@@ -6,7 +6,7 @@ import PathDetails from './PathDetails';
 
 const libraries = ['places'];
 
-export default function Create({ editPath }) {
+export default function Create({ formInfo }) {
   // loads Google places autocomplete
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
@@ -14,14 +14,15 @@ export default function Create({ editPath }) {
   });
 
   useEffect(() => {
-    if(editPath){
+    if(formInfo){
+      console.log(formInfo);
       setPath({
-        path_name: editPath.path_name,
-        description: editPath.description,
-        places: editPath.places
+        path_name: formInfo.path_name,
+        description: formInfo.description,
+        places: formInfo.places
       });
     }
-  }, [editPath]);
+  }, [formInfo]);
 
   // path that will be modified and updated
   const [path, setPath] = useState({
@@ -102,11 +103,13 @@ export default function Create({ editPath }) {
         </div>
         <div>
           <label className='form-label' htmlFor='path_name'>Path Name</label>
-          <input className="form-control" id='path_name' value={editPath.path_name} type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
+          <input className="form-control" id='path_name' value={formInfo ? formInfo.path_name : ""}
+                  type="text" placeholder="Enter Path Name" onBlur={updatePathName} />
         </div>
         <div>
           <label className='form-label' htmlFor='description'>Description</label>
-          <input className="form-control" id='description' value={editPath.description} type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
+          <input className="form-control" id='description' value={formInfo ? formInfo.description : ""}
+                  type="text" placeholder="Enter your thoughts to this path!" onBlur={updateDescription} />
         </div>
         <div>
           <label className='form-label' htmlFor='places'>Places</label>

@@ -4,8 +4,8 @@ import PathDetails from "./PathDetails";
 
 function Popup({ path, user, setLikes, fillForm }) {
   const [newLike, updateLike] = useState(path.num_likes);
-  const [hasLiked, update] = useState(false);
   const [comments, setComments] = useState([]);
+  const [hasLiked, setHasLiked] = useState(false);
   const history = useNavigate()
 
   useEffect(() => {
@@ -37,9 +37,9 @@ function Popup({ path, user, setLikes, fillForm }) {
       });
       await statusCheck(response);
       let data = await response.json();
-      update(data.hasLiked);
       setLikes(path._id, data.like);
       updateLike(data.like);
+      setHasLiked(data.hasLiked);
     } catch (error) {
       console.error("Error updating likes:", error);
     }
@@ -74,7 +74,6 @@ function Popup({ path, user, setLikes, fillForm }) {
       });
       await statusCheck(response);
       let data = await response.json();
-      console.log(comments);
       if(comments.length === 0){
         setComments([data]);
       }else{
