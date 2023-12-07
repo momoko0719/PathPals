@@ -55,6 +55,7 @@ router.post('/updateBio', async (req, res) => {
   try {
     if (req.session.isAuthenticated) {
       const { username, bio } = req.body;
+      console.log(username, bio);
       const user = await models.User.findOne({ email: username });
       user.bio = bio;
       await user.save();

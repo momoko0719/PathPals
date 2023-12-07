@@ -68,12 +68,13 @@ export default function Profile({ fillForm }) {
     fetch('/api/users/updateBio', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bio: bio, username: userInfo.username })
+      body: JSON.stringify({ bio: bio, username: userInfo.email })
     })
       .then(res => res.json())
       .then(data => {
         if (data.status === 'success') {
           setEditBio(false);
+          window.location.reload();
         } else {
           console.error('Error saving bio:', data.error);
         }
