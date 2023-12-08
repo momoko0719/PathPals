@@ -20,8 +20,8 @@ export default function Create({ formInfo }) {
 
   useEffect(() => {
     if (formInfo) {
-      console.log(formInfo);
       setPath({
+        path_id: formInfo.path_id,
         path_name: formInfo.path_name,
         description: formInfo.description,
         places: formInfo.places
@@ -31,6 +31,7 @@ export default function Create({ formInfo }) {
 
   // path that will be modified and updated
   const [path, setPath] = useState({
+    path_id: '',
     path_name: '',
     description: '',
     places: [] // an array of place ids
@@ -40,14 +41,7 @@ export default function Create({ formInfo }) {
 
   useEffect(() => {
     const checkIsCompleted = () => {
-      console.log('is monitoring');
-      console.log(path);
-      if (path.path_name !== '' && path.description !== '' && path.places.length !== 0) {
-        console.log('is completed');
-        return true;
-      } else {
-        return false;
-      }
+      return (path.path_name !== '' && path.description !== '' && path.places.length !== 0);
     };
 
     // Update isCompleted based on the current path state

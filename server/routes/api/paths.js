@@ -2,6 +2,7 @@ var express = require("express");
 var models = require("../../models");
 var router = express.Router();
 var mongoose = require('mongoose');
+const e = require("express");
 
 // get all paths
 router.get("/", async function (req, res, next) {
@@ -46,19 +47,27 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-// save a new path
+// save/update a path
 router.post('/', async (req, res) => {
   try {
     if (req.session.isAuthenticated) {
       let username = req.session.account.username;
-      let { path_name, description, places } = req.body;
-      const newPath = new models.Path({
-        username: username,
-        path_name,
-        description,
-        places
-      });
-      await newPath.save();
+      let { path_id, path_name, description, places } = req.body;
+      const exists = await models.Path.findById(path_id);
+      if (exists) {
+        exists.path_name = path_name;
+        exists.description = description;
+        exists.places = places;
+        await exists.save();
+      } else {
+        const newPath = new models.Path({
+          username: username,
+          path_name,
+          description,
+          places
+        });
+        await newPath.save();
+      }
       res.json({ status: 'success' });
     } else {
       res.status(401).json({ error: 'not logged in' });
@@ -114,8 +123,8 @@ router.post('/likes', async (req, res) => {
             num_likes: like,
             likes: users
           }, { new: true });
-          res.json({like: updateLike.num_likes, likes: users});
-        }else{
+          res.json({ like: updateLike.num_likes, likes: users });
+        } else {
           res.status(400).json({ status: "error", error: 'no path matches given id' });
         }
       } else {
@@ -131,11 +140,11 @@ router.post('/likes', async (req, res) => {
 
 // get all comments for each path
 router.get("/comments/:pathId", async (req, res) => {
-  try{
+  try {
     let id = req.params.pathId;
     let existingId = await models.Path.findById(id);
 
-    if(existingId){
+    if (existingId) {
       let docs = await models.Comment.aggregate([
         {
           $match: { path: new mongoose.Types.ObjectId(id) }
@@ -143,34 +152,34 @@ router.get("/comments/:pathId", async (req, res) => {
         {
           $group: {
             _id: "$path",
-            comments: {$push: {id: "$_id", username: "$username", comment: "$comment", date_created: "$date_created"}}
+            comments: { $push: { id: "$_id", username: "$username", comment: "$comment", date_created: "$date_created" } }
           }
         }
       ]);
 
-      if(docs.length > 0){
+      if (docs.length > 0) {
         res.json(docs[0].comments);
-      }else{
+      } else {
         res.json([]);
       }
-    } else{
+    } else {
       res.status(400).json({ status: "error", error: 'cannot find any path that matches the given id' });
     }
-  }catch(err){
+  } catch (err) {
     res.status(500).json({ status: "error", error: err.message });
   }
 });
 
 // add new comments
 router.post("/comments/:pathId", async (req, res) => {
-  try{
-    if(req.session.isAuthenticated){
+  try {
+    if (req.session.isAuthenticated) {
       let id = req.params.pathId;
 
       let existingId = await models.Path.findById(id);
-      if(existingId){
+      if (existingId) {
         let { username, comment } = req.body;
-        if(username && comment){
+        if (username && comment) {
           let newComment = new models.Comment({
             username: username,
             comment: comment,
@@ -178,16 +187,16 @@ router.post("/comments/:pathId", async (req, res) => {
           });
           let returnedCmt = await newComment.save();
           res.json(returnedCmt);
-        }else{
+        } else {
           res.status(400).json({ status: "error", error: 'missing one or more required params' });
         }
-      } else{
+      } else {
         res.status(400).json({ status: "error", error: 'cannot find any path that matches the given id' });
       }
-    } else{
+    } else {
       res.status(401).json({ error: 'not logged in' });
     }
-  }catch(err){
+  } catch (err) {
     res.status(500).json({ status: "error", error: err.message });
   }
 });
@@ -223,14 +232,14 @@ router.post("/edit", async (req, res) => {
   try {
     if (req.session.isAuthenticated) {
       let { pathId } = req.body;
-      if(pathId){
+      if (pathId) {
         let path = await models.Path.findById(pathId);
 
-        if(path){
+        if (path) {
           path.shared.push(req.session.account?.username);
           let haveAccess = await path.save();
           res.json(haveAccess.shared);
-        } else{
+        } else {
           res.status(401).json({ error: 'cannot find any path with the given id' });
         }
       } else {
@@ -239,7 +248,7 @@ router.post("/edit", async (req, res) => {
     } else {
       res.status(401).json({ error: 'not logged in' });
     }
-  }catch(error){
+  } catch (error) {
     res.status(500).json({ status: "error", error: error.message });
   }
 })

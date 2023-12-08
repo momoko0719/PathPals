@@ -49,12 +49,12 @@ function App() {
   };
 
   return (
-    <div>
+    <>
       <header>
         <NavBar onSearch={handleSearch} />
       </header>
       <main>
-        <div className='container'>
+        <div className='home container'>
           <div className='row'>
             <div className='side-panel col-2 d-flex flex-column'>
               {/* link routes to correspond buttons */}
@@ -83,7 +83,7 @@ function App() {
           </div>
         </div>
       </main>
-    </div>
+    </>
   );
 }
 

@@ -21,7 +21,6 @@ function Popup({ path, user, setLikes, fillForm }) {
     try {
       let res = await fetch(`/api/paths/comments/${path._id}`);
       res = await res.json();
-      console.log(res);
       setComments(res);
       updateNumComments(res.length);
     } catch (err) {
@@ -140,6 +139,7 @@ function Popup({ path, user, setLikes, fillForm }) {
 function editPath(path, fillForm, history) {
   // send info over to create component
   let editPath = {
+    path_id: path._id,
     path_name: path.path_name,
     description: path.description,
     places: path.places

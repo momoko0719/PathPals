@@ -181,7 +181,7 @@ export default function Discover({ searchTerm, userInfo, fillForm }) {
           <p className="text-center">No paths found</p>
         )}
         {filteredPaths.map((path, index) => (
-          <div className="col" key={index}>
+          <div className="col" style={{ height: '200px' }} key={index}>
             <PathCard path={path} onPathClick={openModal} user={userInfo} />
           </div>
         ))}

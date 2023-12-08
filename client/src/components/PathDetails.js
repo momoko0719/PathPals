@@ -18,10 +18,8 @@ export default function PathDetails({ path, onDelete }) {
       let res = await fetch(`/api/places?placeid=${placeId}`);
       await statusCheck(res);
       let details = await res.json();
-      console.log(details);
       return details;
     } catch (err) {
-      console.log(err);
       ErrorHandling(err.message);
       return null;
     }
