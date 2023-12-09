@@ -5,12 +5,13 @@ import usePlacesAutocomplete from "use-places-autocomplete";
 import PathDetails from './PathDetails';
 
 const libraries = ['places'];
+const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
 export default function Create({ formInfo }) {
   // Check if the user is logged in
   const identityInfo = JSON.parse(sessionStorage.getItem('identityInfo'));
   if (identityInfo.status !== 'loggedin') {
-    window.location.href = 'http://localhost:3000/auth/signin';
+    window.location.href = `SERVER_URL/auth/signin`;
   }
   // loads Google places autocomplete
   const { isLoaded, loadError } = useLoadScript({

@@ -6,7 +6,7 @@ import Profile from './components/Profile';
 import Discover from './components/Discover';
 import About from './components/About';
 
-const SERVER_URL = 'http://localhost:3001';
+const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
 function App() {
   const [identityInfo, setIdentityInfo] = useState({});

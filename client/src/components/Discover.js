@@ -3,6 +3,8 @@ import Modal from "react-modal";
 import Popup from "./Popup";
 import PathCard from "./PathCard";
 
+const SERVER_URL = process.env.REACT_APP_SERVER_URL;
+
 export default function Discover({ searchTerm, userInfo, fillForm }) {
   const [paths, setPaths] = useState([]);
   const [filteredPaths, setFilteredPaths] = useState([]);
@@ -12,6 +14,13 @@ export default function Discover({ searchTerm, userInfo, fillForm }) {
   const [selectedPath, setSelectedPath] = useState(null);
 
   const openModal = (path) => {
+    // Check if the user is logged in
+    const identityInfo = JSON.parse(sessionStorage.getItem('identityInfo'));
+    if (identityInfo.status !== 'loggedin') {
+      window.location.href = `${SERVER_URL}/auth/signin`;
+      return null;
+    }
+
     if (!path._id) {
       console.error('No _id property on path object:', path);
       return;
