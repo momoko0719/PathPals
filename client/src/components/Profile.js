@@ -23,7 +23,7 @@ export default function Profile({ fillForm }) {
         })
         .catch(err => console.log(err));
     }
-  }, []);
+  }, [identityInfo]);
 
   // Fetch paths
   useEffect(() => {

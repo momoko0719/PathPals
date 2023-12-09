@@ -18,7 +18,7 @@ export default function NavBar({ onSearch }) {
   return (
     <nav className="navbar bg-white fixed-top">
       <div className='container'>
-        <a className="navbar-brand">PathPal</a>
+        <a className="navbar-brand" href='/'>PathPal</a>
         <form className="d-flex" role="search" onSubmit={handleSearchSubmit}>
           <input
             className="form-control me-2 search-field"
@@ -32,7 +32,7 @@ export default function NavBar({ onSearch }) {
         </form>
         <ul className="navbar-nav">
           <li className="nav-item">
-            <a className="nav-link" href="/about">About Us</a>
+            <button className="nav-link">About Us</button>
           </li>
         </ul>
       </div>

@@ -11,7 +11,7 @@ export default function Create({ formInfo }) {
   // Check if the user is logged in
   const identityInfo = JSON.parse(sessionStorage.getItem('identityInfo'));
   if (identityInfo.status !== 'loggedin') {
-    window.location.href = `SERVER_URL/auth/signin`;
+    window.location.href = `${SERVER_URL}/auth/signin`;
   }
   // loads Google places autocomplete
   const { isLoaded, loadError } = useLoadScript({

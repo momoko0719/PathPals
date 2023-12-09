@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Modal from "react-modal";
 import Popup from "./Popup";
 import PathCard from "./PathCard";
@@ -91,23 +91,8 @@ export default function Discover({ searchTerm, userInfo, fillForm }) {
     }
   };
 
-  useEffect(() => {
-    // Filter paths based on the search term
-    const filtered = paths.filter((path) => {
-      const pathNameMatch = path.path_name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      const placesMatch = path.places.some((place) =>
-        place.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      return pathNameMatch || placesMatch;
-    });
-    const sortedPaths = sortPaths(filtered);
-    setFilteredPaths(sortedPaths);
-  }, [searchTerm, paths, sortingCriteria, sortingOrder]);
-
   // Function to sort paths
-  const sortPaths = (pathsToSort) => {
+  const sortPaths = useCallback((pathsToSort) => {
     const sortedPaths = [...pathsToSort];
 
     switch (sortingCriteria) {
@@ -150,7 +135,22 @@ export default function Discover({ searchTerm, userInfo, fillForm }) {
     }
 
     return sortedPaths;
-  };
+  }, [sortingCriteria, sortingOrder]);
+
+  useEffect(() => {
+    // Filter paths based on the search term
+    const filtered = paths.filter((path) => {
+      const pathNameMatch = path.path_name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const placesMatch = path.places.some((place) =>
+        place.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      return pathNameMatch || placesMatch;
+    });
+    const sortedPaths = sortPaths(filtered);
+    setFilteredPaths(sortedPaths);
+  }, [searchTerm, paths, sortingCriteria, sortingOrder, sortPaths]);
 
   // Function to handle sorting criteria change
   const handleSortingCriteriaChange = (criteria) => {

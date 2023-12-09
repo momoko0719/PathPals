@@ -8,25 +8,20 @@ function Popup({ path, user, setLikes, fillForm }) {
   const [numComments, updateNumComments] = useState(0);
   const [hasLiked, setHasLiked] = useState(path.likes.includes(user.username));
   const history = useNavigate()
-
   useEffect(() => {
-    const fetching = async () => {
-      await fetchComments();
-    };
-
-    fetching();
-  }, [path]);
-
-  const fetchComments = async () => {
-    try {
-      let res = await fetch(`/api/paths/comments/${path._id}`);
-      res = await res.json();
-      setComments(res);
-      updateNumComments(res.length);
-    } catch (err) {
-      console.log(err);
+    const fetchComments = async () => {
+      try {
+        let res = await fetch(`/api/paths/comments/${path._id}`);
+        res = await res.json();
+        setComments(res);
+        updateNumComments(res.length);
+      } catch (err) {
+        console.log(err);
+      }
     }
-  }
+
+    fetchComments();
+  }, [path]);
 
   const updateLikes = async () => {
     try {
@@ -154,9 +149,6 @@ function formatCommentDate(date) {
   return splitDate[1] + "-" + splitDate[2];
 }
 
-function showProfile() {
-  window.location.href = '/profile';
-}
 export default Popup;
 
 /**
