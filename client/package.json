@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3001",
+  "proxy": "https://pathpal.onrender.com/",
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.41",
     "@react-google-maps/api": "^2.19.2",
