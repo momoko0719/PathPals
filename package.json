@@ -4,9 +4,9 @@
   "description": "## Project Proposal",
   "main": "index.js",
   "scripts": {
-    "build": "cd server && npm install && cd ../client && npm install && npm run build",
+    "build": "npm install && cd server && npm install && cd ../client && npm install && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"cd server && nodemon\" \"cd client && npm start\""
+    "start": "npx concurrently \"cd server && nodemon\" \"cd client && npm start\""
   },
   "keywords": [],
   "author": "",
